@@ -57,9 +57,7 @@ class AVApi
     
             foreach ($liders as $lider) {
                 $text = $lider->first_name . $lider->last_name . $lider->company . $lider->locality . $lider->categories . $lider->tags . $lider->slogan . $lider->description;
-                $text = preg_replace('/\s+/', '', $text);
-                $text = str_replace(',', '', $text);
-                $text = str_replace('"', '', $text);
+                $text = prepareText($text);
                 
                 $wpdb->update(
                     $table_name,
@@ -87,9 +85,7 @@ class AVApi
 
             foreach ($podcasts as $podcast) {
                 $text = $podcast->name . $podcast->tags . $podcast->description . $podcast->authors_id;
-                $text = preg_replace('/\s+/', '', $text);
-                $text = str_replace(',', '', $text);
-                $text = str_replace('"', '', $text);
+                $text = prepareText($text);
                 
                 $wpdb->update(
                     $table_name,
@@ -117,9 +113,7 @@ class AVApi
 
             foreach ($books as $book) {
                 $text = $book->name . $book->categories . $book->description . $book->authors_id;
-                $text = preg_replace('/\s+/', '', $text);
-                $text = str_replace(',', '', $text);
-                $text = str_replace('"', '', $text);
+                $text = prepareText($text);
                 
                 $wpdb->update(
                     $table_name,
@@ -134,6 +128,15 @@ class AVApi
             }
 
             return true;
+        }
+
+        function prepareText($text) {
+
+            $newText = preg_replace('/\s+/', '', $text);
+            $newText = str_replace(',', '', $newText);
+            $newText = str_replace('"', '', $newText);
+    
+            return $newText;
         }
         
 

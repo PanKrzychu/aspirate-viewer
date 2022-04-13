@@ -20,8 +20,8 @@ function replaceAccents($str)
 <div class="search-bar">
     <input type="text" name="search-input" id="av-search-input" placeholder="Wpisz dowolne słowo, aby wyszukać ...">
     <div id="counter">
+        <p id="counter-displayed" class="av-displayed" hidden>Znalezionych: </p>
         <p id="counter-all">Wszystkich pozycji: </p>
-        <p id="counter-displayed" hidden>Znalezionych: </p>
     </div>
 </div>
 
