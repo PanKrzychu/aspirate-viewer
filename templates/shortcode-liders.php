@@ -91,7 +91,7 @@ function replaceAccents($str)
 
             $company = "<p class='av-company'>$lider->company</p>";
             if($socials->sites->company != "") {
-                $company = "<a href=http://" . $socials->sites->company . " class='av-company' target='_blank' >$lider->company</a>";
+                $company = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-company'>$lider->company</p></a>";
             }
 
             $socialsElements = $sitePriv . $linkFB . $linkIG . $linkTik . $linkTT . $linkYT . $linkLink;

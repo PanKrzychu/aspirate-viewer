@@ -74,7 +74,7 @@ function replaceAccents($str)
                             <div class='av-categories'>
                                 $categoriesElements
                             </div>
-                            <p class='av-tryhard'>$book->description</p>
+                            <p class='av-description'>$book->description</p>
                             <!-- <div class='av-socials'>
                                 $socialsElements
                             </div> -->
