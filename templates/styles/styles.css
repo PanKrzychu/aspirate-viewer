@@ -10,13 +10,17 @@ body {
 }
 
 .search-bar {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 #counter {
     display: flex;
     justify-content: space-between;
     padding: 0 20px;
+}
+
+#counter p {
+    margin-bottom: 0;
 }
 
 .av-displayed {
@@ -173,7 +177,6 @@ body {
 .av-category {
     background-color: #CA9817;
     margin-right: 5px;
-    margin-top: 10px;
     padding: 4px 10px;
     border-radius: 5px;
     font-size: 14px;
@@ -231,6 +234,10 @@ body {
 
     .av-left-column img {
         max-width: 300px;
+    }
+
+    #counter {
+        padding: 0;
     }
   }
 
