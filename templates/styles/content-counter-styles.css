@@ -1,0 +1,49 @@
+
+.av-content-counter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.av-content-counter-title {
+    color: #091447;
+    font-size: 40px;
+    font-weight: 600;
+    margin-bottom: 50px;
+}
+
+.av-counter-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.av-single-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+}
+
+.av-counter-value {
+    border-radius: 50%;
+    background-color: #091447;
+    color: #fff;
+    font-size: 70px;
+    font-weight: 800;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.av-counter-title {
+    padding: 20px;
+    text-align: center;
+    color: #091447;
+    font-size: 30px;
+    font-weight: 600;
+}
