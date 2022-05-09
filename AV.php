@@ -25,6 +25,8 @@ add_shortcode('lv', 'av_getShortcodeLiders');
 add_shortcode('pv', 'av_getShortcodePodcasts');
 add_shortcode('bv', 'av_getShortcodeBooks');
 
+add_shortcode('cc', 'av_getShortcodeContentCounter');
+
 add_action('rest_api_init', 'AVApi::registerRoutes');
 
 
@@ -49,6 +51,14 @@ function av_getShortcodePodcasts() {
 function av_getShortcodeBooks() {
 
     require_once plugin_dir_path(__FILE__) . 'templates/shortcode-books.php';
+
+    return $content;
+
+}
+
+function av_getShortcodeContentCounter() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-content-counter.php';
 
     return $content;
 
