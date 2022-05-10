@@ -16,6 +16,7 @@ class AVApi
                 generateLidersSearchText();
                 generatePodcastsSearchText();
                 generateBooksSearchText();
+                generateCoursesSearchText();
                 exit();
             }
         ));
@@ -41,6 +42,15 @@ class AVApi
             'methods' => 'GET',
             'callback' => function() {
                 generateBooksSearchText();
+                exit();
+            }
+
+        ));
+
+        register_rest_route('AVApi/v1', '/courses-generate-search-text', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                generateCoursesSearchText();
                 exit();
             }
 
@@ -130,6 +140,34 @@ class AVApi
             return true;
         }
 
+        function generateCoursesSearchText() {
+            global $wpdb;
+            
+            $table_name = $wpdb->prefix . 'cv_courses';
+
+            $query = "SELECT * FROM $table_name";
+
+            $courses = $wpdb->get_results($query);
+
+            foreach ($courses as $course) {
+                $text = $course->name . $course->categories . $course->description . $course->authors_id;
+                $text = prepareText($text);
+                
+                $wpdb->update(
+                    $table_name,
+                    array(
+                        'search_text' => $text
+                    ),
+                    array(
+                        'id' => $course->id
+                    )
+                );
+                echo "Search_text dla kursu o id: " . $course->id . " został wygenerowany: \n" . $text . "\n\n";
+            }
+
+            return true;
+        }
+
         function prepareText($text) {
 
             $newText = preg_replace('/\s+/', '', $text);
@@ -170,6 +208,18 @@ class AVApi
         global $wpdb;
                 
         $table_name = $wpdb->prefix . 'pv_podcasts';
+
+        $query = "SELECT * FROM $table_name ORDER BY top DESC, name";
+        
+        $response = $wpdb->get_results($query);
+
+        return $response;
+    }
+
+    public static function getCourse() {
+        global $wpdb;
+                
+        $table_name = $wpdb->prefix . 'cv_courses';
 
         $query = "SELECT * FROM $table_name ORDER BY top DESC, name";
         
