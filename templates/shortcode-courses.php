@@ -27,22 +27,24 @@ function replaceAccents($str)
 
 <span id="check">
     <?php
-        $podcasts = AVApi::getPodcasts();
+        $courses = AVApi::getResults('cv_courses');
 
-        foreach ($podcasts as $podcast ) {
+        foreach ($courses as $course ) {
 
-            if($podcast->visibility == "1") {
+            if($course->visibility == "1") {
 
-                $links = json_decode($podcast->links);
+                $course->top == 1 ? $isTop = 'av-top' : $isTop = '';
 
-                $podcast->top == 1 ? $isTop = 'av-top' : $isTop = '';
+                $authorsText = AVApi::getLidersText($course->authors_id, $course->authors_other);
 
-                $photoAlt = "$podcast->authors_id - Podcast: $podcast->name";
-                if($podcast->company != "") {
-                    $photoAlt = $photoAlt . " - " . $podcast->company;
+                $authorsElement = "<p class='av-authors'>$authorsText</p>";
+
+                $photoAlt = "$course->authors_id - course: $course->name";
+                if($course->company != "") {
+                    $photoAlt = $photoAlt . " - " . $course->company;
                 }
-                $title = "$podcast->authors_id: ";
-                $categories = explode(",", $podcast->categories);
+                $title = "$course->authors_id: ";
+                $categories = explode(",", $course->categories);
                 $categoriesElements = '';
                 foreach ($categories as $category) {
                     if(strlen($category) > 1) {
@@ -54,46 +56,30 @@ function replaceAccents($str)
 
                 //socials
                 $sitePriv = '';
-                if($links->page != "") {
-                    $sitePriv = "<a class='av-social-icon' href=" . $links->page . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
-                }
-                $linkApple = '';
-                if($links->apple != "") {
-                    $linkApple = "<a class='av-social-icon' href=" . $links->apple . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/apple-podcast.svg')) . "</a>";
-                }
-                $linkGoogle = '';
-                if($links->google != "") {
-                    $linkGoogle = "<a class='av-social-icon' href=" . $links->google . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/google-podcast.svg')) . "</a>";
-                }
-                $linkSpotify = '';
-                if($links->spotify != "") {
-                    $linkSpotify = "<a class='av-social-icon' href=" . $links->spotify . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/spotify-podcast.svg')) . "</a>";
+                if($course->site != "") {
+                    $sitePriv = "<a class='av-social-icon' href=" . $course->site . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
                 }
 
-                $authors = "<p class='av-authors'>$podcast->authors_id</p>";
-
-                $socialsElements = $sitePriv . $linkApple . $linkGoogle . $linkSpotify;
-
-                $photoName = $podcast->cover;
+                $course->cover != "" ? $photoName = $course->cover : $photoName = "photo-placeholder.png";        
                 
 
                 echo "
-                <div class='av-item-container' search-text=`$podcast->search_text`>
+                <div class='av-item-container' search-text=`$course->search_text`>
                     <div class='av-item-content $isTop'>
                         <div class='av-left-column'>
-                            <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/podcasts/' . $photoName) . " alt='$photoAlt' title='$title' >
+                            <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/courses/' . $photoName) . " alt='$photoAlt' title='$title' >
                         </div>
                         <div class='av-right-column'>
                             <div class='av-name-row'>
-                                <h2>$podcast->name</h2>
+                                <h2>$course->name</h2>
                             </div>
-                            $authors
+                            $authorsElement
                             <div class='av-categories'>
                                 $categoriesElements
                             </div>
-                            <p class='av-description'>$podcast->description</p>
+                            <p class='av-description'>$course->description</p>
                             <div class='av-socials'>
-                                $socialsElements
+                                $sitePriv
                             </div>
                         </div>
                     </div>

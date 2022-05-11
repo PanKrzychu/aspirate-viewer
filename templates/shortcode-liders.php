@@ -39,7 +39,7 @@ function replaceAccents($str)
 
             $settings = json_decode($lider->settings);
 
-            if($settings->visibility == "1") {
+            if($lider->visibility == "1") {
 
             $socials = json_decode($lider->socials);
             $settings->cooperation == "1" ? $isCooperation = $cooperationElement : $isCooperation = '';
