@@ -33,7 +33,7 @@ function replaceAccents($str)
 
             if($course->visibility == "1") {
 
-                $course->top == 1 ? $isTop = 'av-top' : $isTop = '';
+                $course->is_top == 1 ? $isTop = 'av-top' : $isTop = '';
 
                 $authorsText = AVApi::getLidersText($course->authors_id, $course->authors_other);
 

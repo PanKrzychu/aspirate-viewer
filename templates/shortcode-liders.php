@@ -27,7 +27,7 @@ function replaceAccents($str)
 
 <span id="check">
     <?php
-        $liders = AVApi::getLiders();
+        $liders = AVApi::getResults('lv_liders', 'is_top DESC, first_name');
         $cooperationElement = "
             <div class='av-tooltip'>
                 <img src=" . plugins_url('aspirate-viewer/templates/assets/icons/aspirate-zweryfikowany-lider-marketingu.svg') . " alt='cooperation'>
