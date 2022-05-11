@@ -5,8 +5,8 @@ let input = document.getElementById("av-search-input");
 let items = document.querySelectorAll(".av-item-container")
 const noResults = document.querySelector(".av-no-results")
 
-const allItemsElement = document.querySelector("#counter-all")
-const displayedItemsElement = document.querySelector("#counter-displayed")
+const allItemsElement = document.querySelector("#av-counter-all")
+const displayedItemsElement = document.querySelector("#av-counter-displayed")
 
 const allItems = document.querySelectorAll(".av-item-container:not([hidden])").length
 allItemsElement.innerHTML = "Wszystkich pozycji: " + allItems

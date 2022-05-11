@@ -13,13 +13,13 @@ body {
     margin-bottom: 20px;
 }
 
-#counter {
+#av-counter {
     display: flex;
     justify-content: space-between;
     padding: 0 20px;
 }
 
-#counter p {
+#av-counter p {
     margin-bottom: 0;
 }
 
@@ -236,7 +236,7 @@ body {
         max-width: 300px;
     }
 
-    #counter {
+    #av-counter {
         padding: 0;
     }
   }
