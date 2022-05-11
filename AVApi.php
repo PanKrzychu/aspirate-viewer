@@ -4,7 +4,6 @@
  * @package  Aspirate Viewer
  */
 
-
 class AVApi
 {
     
@@ -216,7 +215,7 @@ class AVApi
         return $response;
     }
 
-    public static function getCourse() {
+    public static function getCourses() {
         global $wpdb;
                 
         $table_name = $wpdb->prefix . 'cv_courses';
@@ -226,6 +225,52 @@ class AVApi
         $response = $wpdb->get_results($query);
 
         return $response;
+    }
+
+    public static function getResults($tableName) {
+        global $wpdb;
+                
+        $table_name = $wpdb->prefix . $tableName;
+
+        $query = "SELECT * FROM $table_name ORDER BY top DESC, name";
+        
+        $response = $wpdb->get_results($query);
+
+        return $response;
+    }
+
+    public static function getLiderName($id) {
+        global $wpdb;
+                
+        $table_name = $wpdb->prefix . 'lv_liders';
+
+        $query = "SELECT first_name, last_name FROM $table_name WHERE id=" . $id;
+        
+        $response = $wpdb->get_results($query);
+
+        $name = $response[0]->first_name . " " . $response[0]->last_name;
+
+        return $name;
+    }
+
+    public static function getLidersText($ids = "", $plainText = "") {
+        
+        $authorsText = "";
+        $lidersIDs = explode("," , $ids);
+        foreach ($lidersIDs as $id) {
+            $authorsText .= AVApi::getLiderName($id) . ", ";
+        }
+
+        if($plainText != "") {
+            $authorsText .= $plainText;
+            if($ids == "") {
+                $authorsText = substr($authorsText,2);
+            }
+        } else {   
+            $authorsText = substr($authorsText,0,-2);
+        }
+
+        return $authorsText;
     }
     
 }
