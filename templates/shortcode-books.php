@@ -27,7 +27,7 @@ function replaceAccents($str)
 
 <span id="check">
     <?php
-        $books = AVApi::getBooks();
+        $books = AVApi::getResults('bv_books');
 
         foreach ($books as $book ) {
 

@@ -227,12 +227,12 @@ class AVApi
         return $response;
     }
 
-    public static function getResults($tableName) {
+    public static function getResults($tableName, $orderBy = "is_top DESC, name") {
         global $wpdb;
                 
         $table_name = $wpdb->prefix . $tableName;
 
-        $query = "SELECT * FROM $table_name ORDER BY top DESC, name";
+        $query = "SELECT * FROM $table_name ORDER BY " . $orderBy;
         
         $response = $wpdb->get_results($query);
 
