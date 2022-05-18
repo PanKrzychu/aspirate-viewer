@@ -93,7 +93,7 @@ class AVApi
         function generateLidersSearchText() {
             global $wpdb;
                     
-            $table_name = $wpdb->prefix . 'lv_liders';
+            $table_name = $wpdb->prefix . 'av_liders';
     
             $query = "SELECT * FROM $table_name";
     
@@ -121,7 +121,7 @@ class AVApi
         function generatePodcastsSearchText() {
             global $wpdb;
                 
-            $table_name = $wpdb->prefix . 'pv_podcasts';
+            $table_name = $wpdb->prefix . 'av_podcasts';
 
             $query = "SELECT * FROM $table_name";
 
@@ -149,7 +149,7 @@ class AVApi
         function generateBooksSearchText() {
             global $wpdb;
             
-            $table_name = $wpdb->prefix . 'bv_books';
+            $table_name = $wpdb->prefix . 'av_books';
 
             $query = "SELECT * FROM $table_name";
 
@@ -228,7 +228,7 @@ class AVApi
     public static function getLiderName($id) {
         global $wpdb;
                 
-        $table_name = $wpdb->prefix . 'lv_liders';
+        $table_name = $wpdb->prefix . 'av_liders';
 
         $query = "SELECT first_name, last_name FROM $table_name WHERE id=" . $id;
         
@@ -272,21 +272,21 @@ class AVApi
 
         global $wpdb;
                 
-        $table_name_liders = $wpdb->prefix . 'lv_liders';
+        $table_name_liders = $wpdb->prefix . 'av_liders';
 
         $query_liders = "SELECT COUNT(id) FROM $table_name_liders WHERE visibility = 1";
         
         $response["liders_count"] = $wpdb->get_results($query_liders, ARRAY_N)[0][0];
 
 
-        $table_name_podcasts = $wpdb->prefix . 'pv_podcasts';
+        $table_name_podcasts = $wpdb->prefix . 'av_podcasts';
 
         $query_podcasts = "SELECT COUNT(id) FROM $table_name_podcasts WHERE visibility = 1";
         
         $response_podcasts = $wpdb->get_results($query_podcasts, ARRAY_N)[0][0];
 
 
-        $table_name_books = $wpdb->prefix . 'bv_books';
+        $table_name_books = $wpdb->prefix . 'av_books';
 
         $query_books = "SELECT COUNT(id) FROM $table_name_books WHERE visibility = 1";
         
