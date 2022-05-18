@@ -25,7 +25,7 @@ class AVApi
             'callback' => function() {
                 global $wpdb;
                 
-                $table_name = $wpdb->prefix . 'lv_liders';
+                $table_name = $wpdb->prefix . 'av_liders';
 
                 $query = "SELECT * FROM $table_name";
 
@@ -40,7 +40,7 @@ class AVApi
                         $table_name,
                         array(
                             'settings' => $settings,
-                            'visibility' => $visibility
+                            'is_visible' => $visibility
                         ),
                         array(
                             'id' => $lider->id
