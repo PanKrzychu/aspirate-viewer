@@ -142,7 +142,7 @@ class AVApi
         function generateCoursesSearchText() {
             global $wpdb;
             
-            $table_name = $wpdb->prefix . 'cv_courses';
+            $table_name = $wpdb->prefix . 'av_courses';
 
             $query = "SELECT * FROM $table_name";
 
@@ -175,7 +175,6 @@ class AVApi
     
             return $newText;
         }
-        
 
     }
 

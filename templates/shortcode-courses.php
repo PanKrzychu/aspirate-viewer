@@ -20,7 +20,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
 <span id="check">
     <?php
-        $courses = AVApi::getResults('cv_courses');
+        $courses = AVApi::getResults('av_courses');
 
         foreach ($courses as $course ) {
 

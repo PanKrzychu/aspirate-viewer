@@ -19,7 +19,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
 <span id="check">
     <?php
-        $books = AVApi::getResults('bv_books');
+        $books = AVApi::getResults('av_books');
 
         foreach ($books as $book ) {
 
