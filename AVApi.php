@@ -20,6 +20,41 @@ class AVApi
             }
         ));
 
+        register_rest_route('AVApi/v1', '/set-visibility', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                global $wpdb;
+                
+                $table_name = $wpdb->prefix . 'lv_liders';
+
+                $query = "SELECT * FROM $table_name";
+
+                $liders = $wpdb->get_results($query);
+
+                foreach ($liders as $lider) {
+                    $settings = json_decode($lider->settings);
+                    $visibility = $settings->visibility;
+                    unset($settings->visibility);
+                    $settings = json_encode($settings);                    
+                    $wpdb->update(
+                        $table_name,
+                        array(
+                            'settings' => $settings,
+                            'visibility' => $visibility
+                        ),
+                        array(
+                            'id' => $lider->id
+                        )
+                    );
+                    echo "Settings dla lidera o id: " . $lider->id . " zostały zaktualizowane\n\n";
+                }
+
+                exit();
+
+            }
+        ));
+
+
         register_rest_route('AVApi/v1', '/liders-generate-search-text', array(
             'methods' => 'GET',
             'callback' => function() {
@@ -229,6 +264,45 @@ class AVApi
         $b = array('A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'D', 'N', 'O', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 's', 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y', 'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c', 'D', 'd', 'D', 'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g', 'H', 'h', 'H', 'h', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j', 'K', 'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'l', 'l', 'N', 'n', 'N', 'n', 'N', 'n', 'n', 'O', 'o', 'O', 'o', 'O', 'o', 'OE', 'oe', 'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S', 's', 'T', 't', 'T', 't', 'T', 't', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'W', 'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f', 'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i', 'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o');
         
         return str_replace($a, $b, $str);
+    }
+
+    public static function getCounterValues() {
+
+        $response["posts_count"] = wp_count_posts()->publish;
+
+        global $wpdb;
+                
+        $table_name_liders = $wpdb->prefix . 'lv_liders';
+
+        $query_liders = "SELECT COUNT(id) FROM $table_name_liders WHERE visibility = 1";
+        
+        $response["liders_count"] = $wpdb->get_results($query_liders, ARRAY_N)[0][0];
+
+
+        $table_name_podcasts = $wpdb->prefix . 'pv_podcasts';
+
+        $query_podcasts = "SELECT COUNT(id) FROM $table_name_podcasts WHERE visibility = 1";
+        
+        $response_podcasts = $wpdb->get_results($query_podcasts, ARRAY_N)[0][0];
+
+
+        $table_name_books = $wpdb->prefix . 'bv_books';
+
+        $query_books = "SELECT COUNT(id) FROM $table_name_books WHERE visibility = 1";
+        
+        $response_books = $wpdb->get_results($query_books, ARRAY_N)[0][0];
+
+        $response["products_count"] = $response_podcasts + $response_books;
+
+
+        $day_1 = new DateTime("2021-07-01");
+        $today = new DateTime();
+
+        $response["days_count"] = $today->diff($day_1)->format("%a");
+
+
+
+        return $response;
     }
     
 }
