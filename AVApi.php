@@ -274,21 +274,20 @@ class AVApi
                 
         $table_name_liders = $wpdb->prefix . 'av_liders';
 
-        $query_liders = "SELECT COUNT(id) FROM $table_name_liders WHERE visibility = 1";
+        $query_liders = "SELECT COUNT(id) FROM $table_name_liders WHERE is_visible = 1";
         
         $response["liders_count"] = $wpdb->get_results($query_liders, ARRAY_N)[0][0];
 
-
         $table_name_podcasts = $wpdb->prefix . 'av_podcasts';
 
-        $query_podcasts = "SELECT COUNT(id) FROM $table_name_podcasts WHERE visibility = 1";
+        $query_podcasts = "SELECT COUNT(id) FROM $table_name_podcasts WHERE is_visible = 1";
         
         $response_podcasts = $wpdb->get_results($query_podcasts, ARRAY_N)[0][0];
 
 
         $table_name_books = $wpdb->prefix . 'av_books';
 
-        $query_books = "SELECT COUNT(id) FROM $table_name_books WHERE visibility = 1";
+        $query_books = "SELECT COUNT(id) FROM $table_name_books WHERE is_visible = 1";
         
         $response_books = $wpdb->get_results($query_books, ARRAY_N)[0][0];
 
