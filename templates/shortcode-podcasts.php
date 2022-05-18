@@ -20,7 +20,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
 <span id="check">
     <?php
-        $podcasts = AVApi::getResults('pv_podcasts');
+        $podcasts = AVApi::getResults('av_podcasts');
 
         foreach ($podcasts as $podcast ) {
 
