@@ -6,7 +6,7 @@
 /*
 Plugin Name: Aspirate Viewer
 Plugin URI: http://markofani.com.pl
-Description: This plugin generates shortcode containing table with liders of marketing, podcasts and books and custom search engine. Shortcodes: [lv], [av], [av], [cv].
+Description: This plugin generates shortcode containing table with liders of marketing, podcasts and books and custom search engine. Shortcodes: [lv], [av], [av], [cv], [cc].
 Version: 1.0.0
 Author: Krzysztof Czachor
 Author URI: https://markofani.com.pl/
@@ -60,7 +60,7 @@ function av_getShortcodeBooks() {
 function av_getShortcodeContentCounter() {
 
     require_once plugin_dir_path(__FILE__) . 'templates/shortcode-content-counter.php';
-    
+
     return $content;
 
 }
