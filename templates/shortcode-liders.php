@@ -47,12 +47,15 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                 $photoAlt = $photoAlt . " - " . $lider->company;
             }
             $title = "$lider->first_name $lider->last_name: ";
-            $categories = explode(",", $lider->categories);
             $categoriesElements = '';
-            foreach ($categories as $category ) {
-                $categoriesElements .= "<span class='av-category'> $category </span>";
-                $title = $title . "$category, ";
+            if($lider->categories != "") {
+                $categories = explode(",", $lider->categories);
+                foreach ($categories as $category ) {
+                    $categoriesElements .= "<span class='av-category'> $category </span>";
+                    $title = $title . "$category, ";
+                }
             }
+            
             $title = substr($title,0,-2);
 
             //socials
