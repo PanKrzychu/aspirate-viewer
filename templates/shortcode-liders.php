@@ -19,7 +19,14 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
 <span id="check">
     <?php
-        $liders = AVApi::getResults('av_liders', 'is_top DESC, first_name');
+
+        $liders = [];
+        if($args['is_foreign']) {
+            $liders = AVApi::getResults('av_liders', "is_visible = 1 and country_group = 'zagraniczny'", 'is_top DESC, first_name');
+        } else {
+            $liders = AVApi::getResults('av_liders', "is_visible = 1 and country_group = 'polski'",  'is_top DESC, first_name');
+        }
+
         $cooperationElement = "
             <div class='av-tooltip'>
                 <img src=" . plugins_url('aspirate-viewer/templates/assets/icons/aspirate-zweryfikowany-lider-marketingu.svg') . " alt='cooperation'>

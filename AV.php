@@ -33,7 +33,11 @@ add_action('rest_api_init', 'AVApi::registerRoutes');
 
 
 
-function av_getShortcodeLiders() {
+function av_getShortcodeLiders( $atts ) {
+
+    $args = shortcode_atts( array(
+        'is_foreign' => false
+    ), $atts );
 
     require_once plugin_dir_path(__FILE__) . 'templates/shortcode-liders.php';
 

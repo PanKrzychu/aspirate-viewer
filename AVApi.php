@@ -213,12 +213,12 @@ class AVApi
 
     }
 
-    public static function getResults($tableName, $orderBy = "is_top DESC, name") {
+    public static function getResults($tableName, $where = "is_visible = 1", $orderBy = "is_top DESC, name") {
         global $wpdb;
                 
         $table_name = $wpdb->prefix . $tableName;
 
-        $query = "SELECT * FROM $table_name WHERE is_visible = 1 ORDER BY " . $orderBy;
+        $query = "SELECT * FROM $table_name WHERE " . $where . " ORDER BY " . $orderBy;
         
         $response = $wpdb->get_results($query);
 
