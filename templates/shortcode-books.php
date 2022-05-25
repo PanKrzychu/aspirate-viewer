@@ -22,11 +22,14 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
         $books = AVApi::getResults('av_books');
 
         foreach ($books as $book ) {
+            
+            $authorsText = AVApi::getLidersText($book->authors_id, $book->authors_other);
+            $authorsElement = "<p class='av-authors'>$authorsText</p>";
 
-            $photoAlt = "$book->authors_id - Book: $book->name";
+            $photoAlt = "$authorsText - Book: $book->name";
             $book->top == 1 ? $isTop = 'av-top' : $isTop = '';
             
-            $title = "$book->authors_id: ";
+            $title = "$authorsText: ";
             $categories = explode(",", $book->categories);
             $categoriesElements = '';
             foreach ($categories as $category) {
@@ -37,9 +40,6 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             }
             $title = substr($title,0,-2);
 
-            $authorsText = AVApi::getLidersText($book->authors_id, $book->authors_other);
-
-            $authorsElement = "<p class='av-authors'>$authorsText</p>";
 
             $photoName = $book->cover;
             

@@ -27,16 +27,15 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             $links = json_decode($podcast->links);
 
             $authorsText = AVApi::getLidersText($podcast->authors_id, $podcast->authors_other);
-
             $authorsElement = "<p class='av-authors'>$authorsText</p>";
 
             $podcast->top == 1 ? $isTop = 'av-top' : $isTop = '';
 
-            $photoAlt = "$podcast->authors_id - Podcast: $podcast->name";
+            $photoAlt = "$authorsText - Podcast: $podcast->name";
             if($podcast->company != "") {
                 $photoAlt = $photoAlt . " - " . $podcast->company;
             }
-            $title = "$podcast->authors_id: ";
+            $title = "$authorsText: ";
             $categories = explode(",", $podcast->categories);
             $categoriesElements = '';
             foreach ($categories as $category) {

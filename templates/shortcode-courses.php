@@ -27,14 +27,13 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             $course->is_top == 1 ? $isTop = 'av-top' : $isTop = '';
 
             $authorsText = AVApi::getLidersText($course->authors_id, $course->authors_other);
-
             $authorsElement = "<p class='av-authors'>$authorsText</p>";
 
-            $photoAlt = "$course->authors_id - course: $course->name";
+            $photoAlt = "$authorsText - course: $course->name";
             if($course->company != "") {
                 $photoAlt = $photoAlt . " - " . $course->company;
             }
-            $title = "$course->authors_id: ";
+            $title = "$authorsText: ";
             $categories = explode(",", $course->categories);
             $categoriesElements = '';
             foreach ($categories as $category) {
