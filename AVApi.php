@@ -128,7 +128,7 @@ class AVApi
             $podcasts = $wpdb->get_results($query);
 
             foreach ($podcasts as $podcast) {
-                $text = $podcast->name . $podcast->tags . $podcast->description . $podcast->authors_id;
+                $text = $podcast->name . $podcast->tags . $podcast->description . AVApi::getLidersText($podcast->authors_id, $podcast->authors_other);
                 $text = prepareText($text);
                 
                 $wpdb->update(
@@ -156,7 +156,7 @@ class AVApi
             $books = $wpdb->get_results($query);
 
             foreach ($books as $book) {
-                $text = $book->name . $book->categories . $book->description . $book->authors_id;
+                $text = $book->name . $book->categories . $book->description . AVApi::getLidersText($book->authors_id, $book->authors_other);
                 $text = prepareText($text);
                 
                 $wpdb->update(
@@ -184,7 +184,7 @@ class AVApi
             $courses = $wpdb->get_results($query);
 
             foreach ($courses as $course) {
-                $text = $course->name . $course->categories . $course->description . $course->authors_id;
+                $text = $course->name . $course->categories . $course->description . AVApi::getLidersText($course->authors_id, $course->authors_other);
                 $text = prepareText($text);
                 
                 $wpdb->update(
