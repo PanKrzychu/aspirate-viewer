@@ -38,7 +38,12 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                     $title = $title . "$category, ";
                 }
             }
-            $title = substr($title,0,-2);
+
+            $infoElements = '';
+            $infoList = AVApi::getBookBadges($book);
+            foreach ($infoList as $info) {
+                $infoElements .= "<span class='av-info-badge'> $info </span>";
+            }
 
 
             $photoName = $book->cover;
@@ -57,6 +62,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         $authorsElement
                         <div class='av-categories'>
                             $categoriesElements
+                            $infoElements
                         </div>
                         <p class='av-description'>$book->description</p>
                         <!-- <div class='av-socials'>

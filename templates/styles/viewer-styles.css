@@ -145,7 +145,7 @@ body {
 }
 
 .av-description {
-    margin-top: 10px !important;
+    margin-top: 5px !important;
 }
 
 .av-social-icon {
@@ -176,12 +176,27 @@ body {
 
 .av-category {
     background-color: #CA9817;
+    border: solid #CA9817;
     margin-right: 5px;
+    margin-bottom: 5px;
     padding: 4px 10px;
     border-radius: 5px;
     font-size: 14px;
     font-weight: 700;
     color: #ffffff;
+    text-transform: uppercase;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.av-info-badge {
+    border: solid #314AA3;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #314AA3;
     text-transform: uppercase;
     font-family: 'Source Sans Pro', sans-serif;
 }
