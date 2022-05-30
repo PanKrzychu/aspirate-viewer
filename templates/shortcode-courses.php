@@ -4,7 +4,7 @@ require_once plugin_dir_path(__FILE__) . '../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
-wp_enqueue_style('av-styles', plugins_url('aspirate-viewer/templates/styles/styles.css'));
+wp_enqueue_style('av-styles', plugins_url('aspirate-viewer/templates/styles/viewer-styles.css'));
 wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/search.js' ), array(), NULL, true);
 
 
@@ -44,6 +44,12 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             }
             $title = substr($title,0,-2);
 
+            $infoElements = '';
+            $infoList = AVApi::getCourseBadges($course);
+            foreach ($infoList as $info) {
+                $infoElements .= "<span class='av-info-badge'> $info </span>";
+            }
+
             //socials
             $sitePriv = '';
             if($course->site != "") {
@@ -66,6 +72,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         $authorsElement
                         <div class='av-categories'>
                             $categoriesElements
+                            $infoElements
                         </div>
                         <p class='av-description'>$course->description</p>
                         <div class='av-socials'>
