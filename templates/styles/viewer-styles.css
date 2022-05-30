@@ -174,30 +174,26 @@ body {
     margin-right: 35px;
 }
 
-.av-category {
+.av-category-badge {
     background-color: #CA9817;
-    border: solid #CA9817;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 4px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: 700;
+    border-color: #CA9817 !important;
     color: #ffffff;
     text-transform: uppercase;
-    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .av-info-badge {
-    border: solid #314AA3;
+    border-color: #314AA3;
+    color: #314AA3;
+}
+
+.av-badge {
+    border: solid 2px;
     margin-right: 5px;
     margin-bottom: 5px;
     padding: 4px 10px;
     border-radius: 5px;
     font-size: 14px;
     font-weight: 700;
-    color: #314AA3;
-    text-transform: uppercase;
     font-family: 'Source Sans Pro', sans-serif;
 }
 

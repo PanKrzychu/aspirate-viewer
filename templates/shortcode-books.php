@@ -34,7 +34,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             $categoriesElements = '';
             foreach ($categories as $category) {
                 if(strlen($category) > 1) {
-                    $categoriesElements .= "<span class='av-category'> $category </span>";
+                    $categoriesElements .= "<span class='av-category-badge av-badge'> $category </span>";
                     $title = $title . "$category, ";
                 }
             }
@@ -42,7 +42,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             $infoElements = '';
             $infoList = AVApi::getBookBadges($book);
             foreach ($infoList as $info) {
-                $infoElements .= "<span class='av-info-badge'> $info </span>";
+                $infoElements .= "<span class='av-info-badge av-badge'> $info </span>";
             }
 
 

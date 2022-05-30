@@ -51,7 +51,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             if($lider->categories != "") {
                 $categories = explode(",", $lider->categories);
                 foreach ($categories as $category ) {
-                    $categoriesElements .= "<span class='av-category'> $category </span>";
+                    $categoriesElements .= "<span class='av-category-badge av-badge'> $category </span>";
                     $title = $title . "$category, ";
                 }
             }
