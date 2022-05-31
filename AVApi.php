@@ -263,9 +263,9 @@ class AVApi
         
         $badgesList = [];
 
-        if($book->info_printed['available' == 1]) array_push($badgesList, "książka");
-        if($book->info_ebook['available' == 1]) array_push($badgesList, "e-book");
-        if($book->info_audio['available' == 1]) array_push($badgesList, "audio book");
+        if(json_decode($book->info_printed)->available == 1) array_push($badgesList, "książka");
+        if(json_decode($book->info_ebook)->available == 1) array_push($badgesList, "e-book");
+        if(json_decode($book->info_audio)->available == 1) array_push($badgesList, "audio book");
 
         return $badgesList;
     }
