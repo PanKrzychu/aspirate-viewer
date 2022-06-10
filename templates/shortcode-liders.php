@@ -96,9 +96,8 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
             $socialsElements = $sitePriv . $linkFB . $linkIG . $linkTik . $linkTT . $linkYT . $linkLink;
 
-            $nameSlug = strtolower(AVApi::replaceAccents($lider->first_name . "-" . $lider->last_name));
-            $photoName = "aspirate-blog-marketingowy-liderzy-marketingu-$nameSlug.jpg";
-            
+            $nameSlug = preg_replace('/\s+/', '', strtolower(AVApi::replaceAccents($lider->first_name . "-" . $lider->last_name)));
+            $photoName = "aspirate-blog-marketingowy-liderzy-marketingu-$nameSlug.jpg";            
 
             echo "
             <div class='av-item-container' search-text=`$lider->search_text`>
