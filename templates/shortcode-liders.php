@@ -106,7 +106,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/liders/' . $photoName) . " alt='$photoAlt' title='$title' >
                     </div>
                     <div class='av-right-column'>
-                        <div class='av-name-row'>
+                        <div class='av-name-row av-name-row-big'>
                             <h2>$lider->first_name $lider->last_name</h2>
                             $isCooperation
                         </div>

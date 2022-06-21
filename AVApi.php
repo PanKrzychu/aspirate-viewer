@@ -16,6 +16,7 @@ class AVApi
                 generatePodcastsSearchText();
                 generateBooksSearchText();
                 generateCoursesSearchText();
+                generateDictionarySearchText();
                 exit();
             }
         ));
@@ -85,6 +86,15 @@ class AVApi
             'methods' => 'GET',
             'callback' => function() {
                 generateCoursesSearchText();
+                exit();
+            }
+
+        ));
+
+        register_rest_route('AVApi/v1', '/dictionary-generate-search-text', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                generateDictionarySearchText();
                 exit();
             }
 
@@ -202,6 +212,33 @@ class AVApi
             return true;
         }
 
+        function generateDictionarySearchText() {
+            global $wpdb;
+            
+            $table_name = $wpdb->prefix . 'av_dictionary';
+
+            $query = "SELECT * FROM $table_name";
+
+            $phrases = $wpdb->get_results($query);
+
+            foreach ($phrases as $phrase) {
+                $text = prepareText($phrase->phrase);
+                
+                $wpdb->update(
+                    $table_name,
+                    array(
+                        'search_text' => $text
+                    ),
+                    array(
+                        'id' => $phrase->id
+                    )
+                );
+                echo "Search_text dla frazy o id: " . $phrase->id . " został wygenerowany: \n" . $text . "\n\n";
+            }
+
+            return true;
+        }
+
         function prepareText($text) {
 
             $newText = preg_replace('/\s+/', '', $text);
@@ -219,7 +256,7 @@ class AVApi
         $table_name = $wpdb->prefix . $tableName;
 
         $query = "SELECT * FROM $table_name WHERE " . $where . " ORDER BY " . $orderBy;
-        
+
         $response = $wpdb->get_results($query);
 
         return $response;
@@ -323,6 +360,37 @@ class AVApi
 
 
         return $response;
+    }
+
+    public static function getDictionaryLetters() {
+        $allLetters = array('A', 'Ą', 'B', 'C', 'D', 'E', 'Ę', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'Ł', 'M', 'N', 'Ń', 'O', 'Ó', 'P', 'Q', 'R', 'S', 'Ś', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ź', 'Ż');
+        $activeLetters = array();
+        $returnArray = array();
+
+        $results = AVApi::getResults('av_dictionary', "id > 0", "phrase");
+        $currentLetter = "";
+        foreach ($results as $row ) {    
+            if($row->phrase[0] != $currentLetter) {
+                $currentLetter = $row->phrase[0];
+                array_push($activeLetters, $currentLetter);
+            }
+        }
+
+        foreach ($allLetters as $letter) {
+            if(in_array($letter, $activeLetters)) {
+                array_push($returnArray, (object)[
+                    "letter" => $letter,
+                    "is_present" => 1
+                ]);
+            } else {
+                array_push($returnArray, (object)[
+                    "letter" => $letter,
+                    "is_present" => 0
+                ]);
+            }
+        }
+
+        return $returnArray;
     }
     
 }

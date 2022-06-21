@@ -25,6 +25,7 @@ add_shortcode('lv', 'av_getShortcodeLiders');
 add_shortcode('pv', 'av_getShortcodePodcasts');
 add_shortcode('bv', 'av_getShortcodeBooks');
 add_shortcode('cv', 'av_getShortcodeCourses');
+add_shortcode('dv', 'av_getShortcodeDictionary');
 
 add_shortcode('cc', 'av_getShortcodeContentCounter');
 
@@ -72,6 +73,14 @@ function av_getShortcodeContentCounter() {
 function av_getShortcodeCourses() {
 
     require_once plugin_dir_path(__FILE__) . 'templates/shortcode-courses.php';
+
+    return $content;
+
+}
+
+function av_getShortcodeDictionary() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-dictionary.php';
 
     return $content;
 

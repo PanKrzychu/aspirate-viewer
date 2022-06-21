@@ -76,7 +76,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/podcasts/' . $photoName) . " alt='$photoAlt' title='$title' >
                     </div>
                     <div class='av-right-column'>
-                        <div class='av-name-row'>
+                        <div class='av-name-row av-name-row-big'>
                             <h2>$podcast->name</h2>
                         </div>
                         $authorsElement
