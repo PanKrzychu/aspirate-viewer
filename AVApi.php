@@ -70,42 +70,6 @@ class AVApi
             }
         ));
 
-        register_rest_route('AVApi/v1', '/copy-page', array(
-            'methods' => 'GET',
-            'callback' => function() {
-
-                $post_id = 2316;
-                $post = (array) get_post( $post_id ); // Post to duplicate.
-                unset($post['ID']); // Remove id, wp will create new post if not set.
-                $post['post_title'] = "Aleksandra Sidorowska";
-                $post['post_name'] = "aleksandra-sidorowska";
-                $new_post_id = wp_insert_post($post);
-
-                /*
-                * duplicate all post meta just in two SQL queries
-                */
-                global $wpdb;
-                $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
-                if (count($post_meta_infos)!=0) {
-                    $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-                    foreach ($post_meta_infos as $meta_info) {
-                        $meta_key = $meta_info->meta_key;
-                        if( $meta_key == '_wp_old_slug' ) continue;
-                        $meta_value = addslashes($meta_info->meta_value);
-                        $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
-                    }
-                    $sql_query.= implode(" UNION ALL ", $sql_query_sel);
-
-                    $sql_query = str_replace('2316', $new_post_id, $sql_query);
-
-                    echo $sql_query;
-                    $wpdb->query($sql_query);
-                }
-                exit();
-            }
-        ));
-
-
         register_rest_route('AVApi/v1', '/copy-pages', array(
             'methods' => 'GET',
             'callback' => function() {
@@ -126,7 +90,6 @@ class AVApi
                     //filter zwraca do tablicy dane jeżeli objekt już ma podstronę
                     $copyArrays = array_filter($existingPages, function($obj) use($product) {
                         if($obj->type == $product->type && $obj->object_id == $product->id) {
-                            echo "true  ";
                             return true;
                         } else {
                             return false;
@@ -218,7 +181,6 @@ class AVApi
                 // $existingPages = AVApi::getResults('av_pages', 'id > 0', 'id');
 
                 // $postId = 0;
-echo count($liders);
                 // //lecimy po każdym objekcie w bazie
                 // foreach ($products as $product) {
 
