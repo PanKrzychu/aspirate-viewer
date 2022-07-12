@@ -82,7 +82,7 @@ class AVApi
 
                 $existingPages = AVApi::getResults('av_pages', 'id > 0', 'id');
 
-                $postId = 0;
+                $pageId = 9990;
 
                 //lecimy po każdym objekcie w bazie
                 foreach ($products as $product) {
@@ -101,18 +101,17 @@ class AVApi
 
                         //rozbicie ze względu na różnice między liderami a resztą
                         if($product->type == "lider") {
-                            $post_id = 9990;
                             $postTitle = $product->first_name . " " . $product->last_name;
                         } else {
-                            $post_id = 9995;
                             $postTitle = $product->name;
                         }
                         
-                        $post = (array) get_post( $post_id ); // Post to duplicate.
+                        $post = (array) get_post( $pageId ); // Post to duplicate.
                         unset($post['ID']); // Remove id, wp will create new post if not set.
                         $post['post_title'] = $postTitle;
                         $post['post_name'] = $product->slug;
                         $post['post_status'] = 'publish';
+                        $post['post_content'] = '[object-info][' . $product->type . '-info][elementor-template id="1141"]';
                         $post['post_parent'] = getParentPostId($product);
                         $new_post_id = wp_insert_post($post);
     
