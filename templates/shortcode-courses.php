@@ -7,6 +7,7 @@ wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Cata
 wp_enqueue_style('av-styles', plugins_url('aspirate-viewer/templates/styles/viewer-styles.css'));
 wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/search.js' ), array(), NULL, true);
 
+
 ?>
 
 <div class="search-bar">
@@ -19,18 +20,21 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
 <span id="check">
     <?php
-        $books = AVApi::getResults('av_books');
+        $courses = AVApi::getResults('av_courses');
 
-        foreach ($books as $book ) {
-            
-            $authorsText = AVApi::getLidersText($book->authors_id, $book->authors_other);
+        foreach ($courses as $course ) {
+
+            $course->is_top == 1 ? $isTop = 'av-top' : $isTop = '';
+
+            $authorsText = AVApi::getLidersText($course->authors_id, $course->authors_other);
             $authorsElement = "<p class='av-authors'>$authorsText</p>";
 
-            $photoAlt = "$authorsText - Book: $book->name";
-            $book->top == 1 ? $isTop = 'av-top' : $isTop = '';
-            
+            $photoAlt = "$authorsText - course: $course->name";
+            if($course->company != "") {
+                $photoAlt = $photoAlt . " - " . $course->company;
+            }
             $title = "$authorsText: ";
-            $categories = explode(",", $book->categories);
+            $categories = explode(",", $course->categories);
             $categoriesElements = '';
             foreach ($categories as $category) {
                 if(strlen($category) > 1) {
@@ -38,36 +42,42 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                     $title = $title . "$category, ";
                 }
             }
+            $title = substr($title,0,-2);
 
             $infoElements = '';
-            $infoList = AVApi::getBookBadges($book);
+            $infoList = AVApi::getCourseBadges($course);
             foreach ($infoList as $info) {
                 $infoElements .= "<span class='av-info-badge av-badge'> $info </span>";
             }
 
+            //socials
+            $sitePriv = '';
+            if($course->site != "") {
+                $sitePriv = "<a class='av-social-icon' href=" . $course->site . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+            }
 
-            $photoName = $book->cover;
+            $course->cover != "" ? $photoName = $course->cover : $photoName = "photo-placeholder.png";        
             
 
             echo "
-            <div class='av-item-container' search-text=`$book->search_text`>
+            <div class='av-item-container' search-text=`$course->search_text`>
                 <div class='av-item-content $isTop'>
                     <div class='av-left-column'>
-                        <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/books/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/courses/' . $photoName) . " alt='$photoAlt' title='$title' >
                     </div>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big'>
-                            <h2>$book->name</h2>
+                            <h2>$course->name</h2>
                         </div>
                         $authorsElement
                         <div class='av-categories'>
                             $categoriesElements
                             $infoElements
                         </div>
-                        <p class='av-description'>$book->description</p>
-                        <!-- <div class='av-socials'>
-                            $socialsElements
-                        </div> -->
+                        <p class='av-description'>$course->description</p>
+                        <div class='av-socials'>
+                            $sitePriv
+                        </div>
                     </div>
                 </div>
             </div>

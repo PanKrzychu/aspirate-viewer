@@ -10,13 +10,17 @@ body {
 }
 
 .search-bar {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
-#counter {
+#av-counter {
     display: flex;
     justify-content: space-between;
     padding: 0 20px;
+}
+
+#av-counter p {
+    margin-bottom: 0;
 }
 
 .av-displayed {
@@ -24,9 +28,27 @@ body {
 }
 
 .av-item-container {
-    min-height: 250px;
+    /* min-height: 250px; */
     margin-bottom: 20px;
 }
+
+/* .av-item-container-blue {
+    padding: 50px 0;
+    margin: -40px 0 20px 0;
+    background-color: #314AA3;
+    width: 100%;
+} */
+
+.av-item-container-blue {
+    padding-top: 40px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* .av-lider-products-container {
+    padding-top: 20px;
+} */
 
 .av-item-content {
     display: flex;
@@ -34,6 +56,11 @@ body {
     /* flex-wrap: wrap; */
     border-radius: 10px;
     background-color: #ffffff;
+}
+
+.av-item-content-blue {
+    display: flex;
+    flex-direction: row;
 }
 
 .av-top {
@@ -75,10 +102,25 @@ body {
 
 .av-name-row h2 {
     font-family: 'Source Sans Pro', sans-serif;
-    font-size: 30px;
     font-weight: 900;
     color: #314AA3;
     margin-bottom: 0;
+}
+
+.av-name-row-blue h2 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 900;
+    color: #FFF;
+    margin-bottom: 0;
+    padding-top: 40px;
+}
+
+.av-name-row-small h2 {
+    font-size: 20px;
+}
+
+.av-name-row-big h2 {
+    font-size: 30px;
 }
 
 .av-name-row h2:first-child {
@@ -87,6 +129,14 @@ body {
 
 .av-name-row img {
     width: 20px;
+}
+
+.av-space-10 {
+    padding-bottom: 10px;
+}
+
+.av-space-40 {
+    padding-bottom: 40px;
 }
 
 /* Tooltip container */
@@ -137,16 +187,35 @@ body {
     font-size: 12px;
     font-weight: 400;
     letter-spacing: 0.2em;
+    margin-bottom: 10px;
+}
+
+.av-company-blue, .av-description-blue {
+    color: #FFF;
 }
 
 .av-description {
-    margin-top: 10px !important;
+    margin-top: 5px !important;
 }
 
 .av-social-icon {
     fill: #A5A5A5;
     height: 20px;
     width: auto;
+}
+
+/* .av-social-icon-blue {
+    fill: #FFF;
+    height: 20px;
+    width: auto;
+} */
+
+.av-socials-blue .av-social-icon {
+    fill: #A5A5A5
+}
+
+.av-socials-blue .av-social-icon:hover {
+    fill: #FFF
 }
 
 .av-social-icon:hover {
@@ -160,6 +229,11 @@ body {
     max-width: 800px;
 }
 
+.av-description-dictionary {
+    max-width: unset !important;
+    margin-right: 20px;
+}
+
 .av-socials {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -169,16 +243,32 @@ body {
     margin-right: 35px;
 }
 
-.av-category {
+.av-category-badge {
     background-color: #CA9817;
+    border-color: #CA9817 !important;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.av-product-quantity-badge {
+    border-color: #4562CA !important;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.av-info-badge {
+    border-color: #314AA3;
+    color: #314AA3;
+}
+
+.av-badge {
+    border: solid 2px;
     margin-right: 5px;
-    margin-top: 10px;
+    margin-bottom: 5px;
     padding: 4px 10px;
     border-radius: 5px;
     font-size: 14px;
     font-weight: 700;
-    color: #ffffff;
-    text-transform: uppercase;
     font-family: 'Source Sans Pro', sans-serif;
 }
 
@@ -191,6 +281,56 @@ body {
     display: flex;
     justify-content: center;
 }
+
+#av-dictionary-anchors {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    overflow-x: hide;
+    padding-bottom: 15px;
+}
+
+.av-dictionary-letter-anchor {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 50px;
+    font-weight: 900;
+    color: #314AA3;
+}
+
+.av-dictionary-anchor-link {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    margin-right: 12px;
+}
+
+.av-dictionary-anchor-link-inactive {
+    color: #EEEEF1;
+    cursor: default;
+}
+
+.av-lider-products-header {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+    color: #314AA3;
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.av-product-link {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+    color: #314AA3;
+    font-size: 16px;
+}
+
+@media only screen and (max-width: 1200px) {
+    #av-dictionary-anchors {
+        overflow-x: scroll;
+    }
+  }
 
 
 @media only screen and (max-width: 700px) {
@@ -215,6 +355,14 @@ body {
         margin-top: 20px;
         margin-bottom: 30px;
     }
+
+    #av-dictionary-anchors {
+        justify-content: left;
+    }
+
+    .av-dictionary-anchor-link {
+        margin-right: 25px;
+    }
   }
 
   @media only screen and (max-width: 450px) {
@@ -230,6 +378,10 @@ body {
 
     .av-left-column img {
         max-width: 300px;
+    }
+
+    #av-counter {
+        padding: 0;
     }
   }
 

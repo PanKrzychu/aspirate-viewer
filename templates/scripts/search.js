@@ -5,8 +5,13 @@ let input = document.getElementById("av-search-input");
 let items = document.querySelectorAll(".av-item-container")
 const noResults = document.querySelector(".av-no-results")
 
-const allItemsElement = document.querySelector("#counter-all")
-const displayedItemsElement = document.querySelector("#counter-displayed")
+let isDictionary = false;
+if(document.querySelector("#av-is-dictionary")) {
+    isDictionary = true
+} 
+
+const allItemsElement = document.querySelector("#av-counter-all")
+const displayedItemsElement = document.querySelector("#av-counter-displayed")
 
 const allItems = document.querySelectorAll(".av-item-container:not([hidden])").length
 allItemsElement.innerHTML = "Wszystkich pozycji: " + allItems
@@ -52,4 +57,23 @@ function doneTyping () {
     }
 
     if(displayed <= 0) noResults.style.display = "flex"
+
+    if(isDictionary) checkLettersForDictionary()
+}
+
+function checkLettersForDictionary() {
+    let letters = document.querySelectorAll(".av-dictionary-letter-anchor")
+
+    if(input.value != "") {
+        letters.forEach((letterElement, index) => {
+            letterElement.setAttribute("hidden", "true");
+        });
+        document.querySelector("#av-dictionary-anchors").style.display = "none"
+    } else {
+        letters.forEach((letterElement, index) => {
+            letterElement.removeAttribute("hidden")
+        });
+        document.querySelector("#av-dictionary-anchors").removeAttribute("style")
+    }
+    
 }
