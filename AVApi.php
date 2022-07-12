@@ -123,7 +123,7 @@ class AVApi
                         $sql_query_sel = [];
                         $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
                         if (count($post_meta_infos)!=0) {
-                            
+
                             $photoData = uploadPhoto($product->og_image, $product->type, $new_post_id);
 
                             $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
@@ -133,7 +133,7 @@ class AVApi
                                     $meta_value = $meta_info->meta_value;
                                     if( $meta_key == '_wp_old_slug' ) continue;
                                     if ( $meta_key == '_thumbnail_id' ) {
-                                        $meta_value = $photoData->id
+                                        $meta_value = $photoData->id;
                                     }
                                     $meta_value = addslashes($meta_value);
                                     $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
@@ -469,8 +469,8 @@ class AVApi
             }
             return (object) array(
                 'id' => $attachment_id,
-                'link' => str_replace($filename, $attachment_data['sizes']['large']['file'], $upload_file['url']);
-            )
+                'link' => str_replace($filename, $attachment_data['sizes']['large']['file'], $upload_file['url'])
+            );
         }
 
     }
