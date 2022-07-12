@@ -111,7 +111,7 @@ class AVApi
                         $post['post_title'] = $postTitle;
                         $post['post_name'] = $product->slug;
                         $post['post_status'] = 'publish';
-                        $post['post_content'] = '[object-info][' . $product->type . '-info][elementor-template id="1141"]';
+                        $post['post_content'] = '[object-info][' . $product->type . '-info]';
                         $post['post_parent'] = getParentPostId($product);
                         $new_post_id = wp_insert_post($post);
     
@@ -123,23 +123,44 @@ class AVApi
                         $sql_query_sel = [];
                         $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
                         if (count($post_meta_infos)!=0) {
+                            
+                            $photoData = uploadPhoto($product->og_image, $product->type, $new_post_id);
+
                             $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
                             foreach ($post_meta_infos as $meta_info) {
                                 $meta_key = $meta_info->meta_key;
-                                $meta_value = $meta_info->meta_value;
-                                if( $meta_key == '_wp_old_slug' ) continue;
-                                if( $meta_key == '_yoast_wpseo_focuskw' ) {
-                                    $meta_value = $postTitle;
-                                } elseif( $meta_key == '_yoast_wpseo_title' ) {
-                                    $meta_value = $product->seo_title;
-                                } elseif( $meta_key == '_yoast_wpseo_metadesc' ) {
-                                    $meta_value = $product->seo_description;
-                                } elseif( $meta_key == '_yoast_wpseo_opengraph-image' ) {
-                                    $meta_value = plugins_url("aspirate-viewer/templates/assets/og-images/" . $product->type . "s/" . $product->og_image);
+                                if(!str_contains($meta_key, "_yoast_wpseo")) {
+                                    $meta_value = $meta_info->meta_value;
+                                    if( $meta_key == '_wp_old_slug' ) continue;
+                                    if ( $meta_key == '_thumbnail_id' ) {
+                                        $meta_value = $photoData->id
+                                    }
+                                    $meta_value = addslashes($meta_value);
+                                    $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
                                 }
+                            }
+
+                            $yoastMeta = array(
+                                ['_yoast_wpseo_opengraph-title', $postTitle],
+                                ['_yoast_wpseo_opengraph-description', $product->seo_description],
+                                ['_yoast_wpseo_opengraph-image', $photoData->link],
+                                ['_yoast_wpseo_opengraph-image-id', $photoData->id],
+                                ['_yoast_wpseo_twitter-title', $postTitle],
+                                ['_yoast_wpseo_twitter-description', $product->seo_description],
+                                ['_yoast_wpseo_twitter-image', $photoData->link],
+                                ['_yoast_wpseo_twitter-image-id', $photoData->id],
+                                ['_yoast_wpseo_focuskw', $postTitle],
+                                ['_yoast_wpseo_title', $product->seo_title],
+                                ['_yoast_wpseo_metadesc', $product->seo_description]
+                            );
+
+                            foreach ($yoastMeta as $yoastInfo) {
+                                $meta_key = $yoastInfo[0];
+                                $meta_value = $yoastInfo[1];
                                 $meta_value = addslashes($meta_value);
                                 $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
                             }
+
                             $sql_query.= implode(" UNION ALL ", $sql_query_sel);
     
                             $sql_query = str_replace($post_id, $new_post_id, $sql_query);
@@ -171,37 +192,45 @@ class AVApi
         register_rest_route('AVApi/v1', '/copy-pages-test', array(
             'methods' => 'GET',
             'callback' => function() {
-                // $books = AVApi::getResults('av_books', "is_visible = 1",  'name');
-                // $podcasts = AVApi::getResults('av_podcasts', "is_visible = 1",  'name');
-                // $courses = AVApi::getResults('av_courses', "is_visible = 1",  'name');
-                $liders = AVApi::getResults('av_liders', "is_visible = 1",  'first_name');
-                // $products = array_merge($books, $podcasts, $courses, $liders);
+                        /*
+                        * duplicate all post meta just in two SQL queries
+                        */
+                        // global $wpdb;
+                        // $sql_query = "";
+                        // $sql_query_sel = [];
+                        // $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
+                        // if (count($post_meta_infos)!=0) {
+                        //     $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
+                        //     foreach ($post_meta_infos as $meta_info) {
+                        //         $meta_key = $meta_info->meta_key;
+                        //         $meta_value = $meta_info->meta_value;
 
-                // $existingPages = AVApi::getResults('av_pages', 'id > 0', 'id');
+                        //         if( $meta_key == '_wp_old_slug' ) continue;
+                        //         if( $meta_key == '_yoast_wpseo_focuskw' ) {
+                        //             $meta_value = $postTitle;
+                        //         } elseif( $meta_key == '_yoast_wpseo_title' ) {
+                        //             $meta_value = $product->seo_title;
+                        //         } elseif( $meta_key == '_yoast_wpseo_metadesc' ) {
+                        //             $meta_value = $product->seo_description;
+                        //         } elseif( $meta_key == '_yoast_wpseo_opengraph-image' ) {
+                        //             $meta_value = plugins_url("aspirate-viewer/templates/assets/og-images/" . $product->type . "s/" . $product->og_image);
+                        //         }
 
-                // $postId = 0;
-                // //lecimy po każdym objekcie w bazie
-                // foreach ($products as $product) {
+                        //         $meta_value = addslashes($meta_value);
+                        //         $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
+                        //     }
 
-                //     //filter zwraca do tablicy dane jeżeli objekt już ma podstronę
-                //     $copyArrays = array_filter($existingPages, function($obj) use($product) {
-                //         // echo $obj->type . " : " . $product->type . " | " . $obj->object_id . " : " . $product->id . "\n\n";
-                //         if($obj->type == $product->type && $obj->object_id == $product->id) {
-                //             return true;
-                //         } else {
-                //             return false;
-                //         }
-                //     });
+                            
+                        //     $sql_query.= implode(" UNION ALL ", $sql_query_sel);
+    
+                        //     $sql_query = str_replace($post_id, $new_post_id, $sql_query);
+    
+                        //     $wpdb->query($sql_query);
+                        // }
 
-                //     // jeżeli tablica jest pusta to dodajemy stronę
-                //     if(count($copyArrays) == 0) {
-                //         echo  " elo ";
-                //     }
-                // }
-
-
+                uploadPhoto('kurs-google-ads-karol-dziedzic.jpg', 'course', 9990);
                 
-                exit();
+
             }
         ));
 
@@ -415,6 +444,33 @@ class AVApi
             } else {
                 return $productParentIds[$data->type];
             }
+        }
+
+        function uploadPhoto($photoName, $type, $parentPostId) {
+            $file = plugin_dir_path(__FILE__) . 'templates/assets/og-images/' . $type . 's/' . $photoName;
+            $filename = basename($file);
+
+            $upload_file = wp_upload_bits($filename, null, file_get_contents($file));
+            if (!$upload_file['error']) {
+                $wp_filetype = wp_check_filetype($filename, null );
+                $attachment = array(
+                    'post_mime_type' => $wp_filetype['type'],
+                    'post_parent' => $parentPostId,
+                    'post_title' => preg_replace('/\.[^.]+$/', '', $filename),
+                    'post_content' => '',
+                    'post_status' => 'inherit'
+                );
+                $attachment_id = wp_insert_attachment( $attachment, $upload_file['file'], $parentPostId );
+                if (!is_wp_error($attachment_id)) {
+                    require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+                    $attachment_data = wp_generate_attachment_metadata( $attachment_id, $upload_file['file'] );
+                    wp_update_attachment_metadata( $attachment_id,  $attachment_data );
+                }
+            }
+            return (object) array(
+                'id' => $attachment_id,
+                'link' => str_replace($filename, $attachment_data['sizes']['large']['file'], $upload_file['url']);
+            )
         }
 
     }
