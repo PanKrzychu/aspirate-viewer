@@ -22,7 +22,6 @@ require_once plugin_dir_path(__FILE__) . 'AVApi.php';
 $plugin = plugin_basename(__FILE__);
 
 add_shortcode('lv', 'av_getShortcodeLiders');
-add_shortcode('lv-lider', 'av_getShortcodeLider');
 add_shortcode('pv', 'av_getShortcodePodcasts');
 add_shortcode('bv', 'av_getShortcodeBooks');
 add_shortcode('cv', 'av_getShortcodeCourses');
