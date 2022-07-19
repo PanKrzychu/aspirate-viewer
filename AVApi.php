@@ -21,62 +21,58 @@ class AVApi
             }
         ));
 
-        register_rest_route('AVApi/v1', '/set-cover', array(
+        register_rest_route('AVApi/v1', '/set-thumnails', array(
             'methods' => 'GET',
             'callback' => function() {
                 global $wpdb;
+
+                $options = 'a:3:{s:18:"custom_width_value";s:0:"";i:0;s:13:"layout-global";i:1;s:15:"remove-featured";}';
                 
-                $table_name = $wpdb->prefix . 'av_liders';
+                //zebranie wszystkich podstron
+                $tablePages = $wpdb->prefix . 'av_pages';
+                $query = "SELECT * FROM $tablePages";
+                $pages = $wpdb->get_results($query);
 
-                $query = "SELECT * FROM $table_name";
+                $tablePostmeta = $wpdb->prefix . 'postmeta';
 
-                $liders = $wpdb->get_results($query);
+                foreach ($pages as $page) {
 
-                foreach ($liders as $lider) {
-                    $nameSlug = preg_replace('/\s+/', '', strtolower(AVApi::replaceAccents($lider->first_name . "-" . $lider->last_name)));
-                    $photoName = "aspirate-blog-marketingowy-liderzy-marketingu-$nameSlug.jpg";
+                    // $metaQuery = "SELECT * FROM $tablePages";
+                    $metaQuery = "SELECT meta_key, meta_id, post_id, meta_value FROM $tablePostmeta WHERE post_id = $page->page_id AND (meta_key = '_thumbnail_id' OR meta_key = 'wpbf_options' OR meta_key = '_yoast_wpseo_opengraph-image-id')";
+                    $metas = $wpdb->get_results($metaQuery, OBJECT_K);
+
+                    // zmiana ustawien 
                     $wpdb->update(
-                        $table_name,
+                        $tablePostmeta,
                         array(
-                            'cover' => $photoName
+                            'meta_value' => $options
                         ),
                         array(
-                            'id' => $lider->id
+                            'meta_id' => $metas['wpbf_options']->meta_id
                         )
                     );
-                    echo "Cover dla lidera o id: " . $lider->id . " został zaktualizowany: " . $photoName ." \n\n";
-                }
 
-                exit();
-
-            }
-        ));
-
-        register_rest_route('AVApi/v1', '/set-slug', array(
-            'methods' => 'GET',
-            'callback' => function() {
-                global $wpdb;
-                
-                $table_name = $wpdb->prefix . 'av_books';
-
-                $query = "SELECT * FROM $table_name";
-
-                $objects = $wpdb->get_results($query);
-
-                foreach ($objects as $object) {
-                    $slug = AVApi::replaceAccents($object->slug);    
-                    $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $slug)));
-                    if(substr($slug, -1) == "-") $slug = substr($slug, 0, -1);
-                    $wpdb->update(
-                        $table_name,
-                        array(
-                            'slug' => $slug
-                        ),
-                        array(
-                            'id' => $object->id
-                        )
-                    );
-                    echo "Slug dla objecta o id: " . $object->id . " został zaktualizowany: " . $slug ." \n\n";
+                    // dodanie lub altualizacja thumbnaila
+                    if(array_key_exists("_thumbnail_id", $metas)) {
+                        $wpdb->update(
+                            $tablePostmeta,
+                            array(
+                                'meta_value' => $metas['_yoast_wpseo_opengraph-image-id']->meta_value
+                            ),
+                            array(
+                                'meta_id' => $metas['_thumbnail_id']->meta_id
+                            )
+                        );
+                    } else {
+                        $wpdb->insert(
+                            $tablePostmeta,
+                            array(
+                                'post_id' => $page->page_id,
+                                'meta_key' => "_thumbnail_id",
+                                'meta_value' => $metas['_yoast_wpseo_opengraph-image-id']->meta_value
+                            )
+                        );
+                    }
                 }
 
                 exit();
