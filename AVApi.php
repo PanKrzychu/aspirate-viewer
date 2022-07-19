@@ -21,7 +21,7 @@ class AVApi
             }
         ));
 
-        register_rest_route('AVApi/v1', '/set-visibility', array(
+        register_rest_route('AVApi/v1', '/set-cover', array(
             'methods' => 'GET',
             'callback' => function() {
                 global $wpdb;
@@ -33,24 +33,245 @@ class AVApi
                 $liders = $wpdb->get_results($query);
 
                 foreach ($liders as $lider) {
-                    $settings = json_decode($lider->settings);
-                    $visibility = $settings->visibility;
-                    unset($settings->visibility);
-                    $settings = json_encode($settings);                    
+                    $nameSlug = preg_replace('/\s+/', '', strtolower(AVApi::replaceAccents($lider->first_name . "-" . $lider->last_name)));
+                    $photoName = "aspirate-blog-marketingowy-liderzy-marketingu-$nameSlug.jpg";
                     $wpdb->update(
                         $table_name,
                         array(
-                            'settings' => $settings,
-                            'is_visible' => $visibility
+                            'cover' => $photoName
                         ),
                         array(
                             'id' => $lider->id
                         )
                     );
-                    echo "Settings dla lidera o id: " . $lider->id . " zostały zaktualizowane\n\n";
+                    echo "Cover dla lidera o id: " . $lider->id . " został zaktualizowany: " . $photoName ." \n\n";
                 }
 
                 exit();
+
+            }
+        ));
+
+        register_rest_route('AVApi/v1', '/set-slug', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                global $wpdb;
+                
+                $table_name = $wpdb->prefix . 'av_books';
+
+                $query = "SELECT * FROM $table_name";
+
+                $objects = $wpdb->get_results($query);
+
+                foreach ($objects as $object) {
+                    $slug = AVApi::replaceAccents($object->slug);    
+                    $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $slug)));
+                    if(substr($slug, -1) == "-") $slug = substr($slug, 0, -1);
+                    $wpdb->update(
+                        $table_name,
+                        array(
+                            'slug' => $slug
+                        ),
+                        array(
+                            'id' => $object->id
+                        )
+                    );
+                    echo "Slug dla objecta o id: " . $object->id . " został zaktualizowany: " . $slug ." \n\n";
+                }
+
+                exit();
+
+            }
+        ));
+
+        register_rest_route('AVApi/v1', '/count-products', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                
+                $books = AVApi::getResults('av_books', "is_visible = 1",  'name');
+                $podcasts = AVApi::getResults('av_podcasts', "is_visible = 1",  'name');
+                $courses = AVApi::getResults('av_courses', "is_visible = 1",  'name');
+
+                $products = array_merge($books, $podcasts, $courses);
+
+                echo "jest " . count($products) . " a osobno: " . count($books) . ", " . count($podcasts) . ", " . count($courses);
+                exit();
+
+            }
+        ));
+
+        register_rest_route('AVApi/v1', '/copy-pages', array(
+            'methods' => 'GET',
+            'callback' => function() {
+
+                $books = AVApi::getResults('av_books', "is_visible = 1",  'name');
+                $podcasts = AVApi::getResults('av_podcasts', "is_visible = 1",  'name');
+                $courses = AVApi::getResults('av_courses', "is_visible = 1",  'name');
+                $liders = AVApi::getResults('av_liders', "is_visible = 1",  'first_name');
+                $products = array_merge($books, $podcasts, $courses, $liders);
+
+                $existingPages = AVApi::getResults('av_pages', 'id > 0', 'id');
+
+                $pageId = 9990;
+
+                //lecimy po każdym objekcie w bazie
+                foreach ($products as $product) {
+
+                    //filter zwraca do tablicy dane jeżeli objekt już ma podstronę
+                    $copyArrays = array_filter($existingPages, function($obj) use($product) {
+                        if($obj->type == $product->type && $obj->object_id == $product->id) {
+                            echo $obj->type . " " . $obj->object_id;
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+
+                    sleep(1);
+                    //jeżeli tablica jest pusta to dodajemy stronę
+                    if(count($copyArrays) == 0) {
+
+                        //rozbicie ze względu na różnice między liderami a resztą
+                        if($product->type == "lider") {
+                            $postTitle = $product->first_name . " " . $product->last_name;
+                        } else {
+                            $postTitle = $product->name;
+                        }
+                        
+                        $post = (array) get_post( $pageId ); // Post to duplicate.
+                        unset($post['ID']); // Remove id, wp will create new post if not set.
+                        $post['post_title'] = $postTitle;
+                        $post['post_name'] = $product->slug;
+                        $post['post_status'] = 'publish';
+                        $post['post_content'] = '[object-info][' . $product->type . '-info]';
+                        $post['post_parent'] = getParentPostId($product);
+                        $new_post_id = wp_insert_post($post);
+
+                        $updatePost = array(
+                            'ID'           => $new_post_id,
+                            'guid'   => substr($post['guid'], 0, -4) . $new_post_id
+                        );
+                       
+                      // Update the post into the database
+                        wp_update_post( $updatePost );
+    
+                        /*
+                        * duplicate all post meta just in two SQL queries
+                        */
+                        global $wpdb;
+                        $sql_query = "";
+                        $sql_query_sel = [];
+                        $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$pageId");
+                        if (count($post_meta_infos)!=0) {
+
+                            $photoData = uploadPhoto($product->og_image, $product->type, $new_post_id);
+                            sleep(1);
+
+                            $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
+                            foreach ($post_meta_infos as $meta_info) {
+                                $meta_key = $meta_info->meta_key;
+                                if(substr($meta_key, 0, 13) != "_yoast_wpseo_") {
+                                    $meta_value = $meta_info->meta_value;
+                                    if( $meta_key == '_wp_old_slug' ) continue;
+                                    if ( $meta_key == '_thumbnail_id' ) {
+                                        $meta_value = $photoData->id;
+                                    }
+                                    $meta_value = addslashes($meta_value);
+                                    $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
+                                }
+                            }
+
+                            $yoastMeta = array(
+                                ['_yoast_wpseo_opengraph-title', $postTitle],
+                                ['_yoast_wpseo_opengraph-description', $product->seo_description],
+                                ['_yoast_wpseo_opengraph-image', $photoData->link],
+                                ['_yoast_wpseo_opengraph-image-id', $photoData->id],
+                                ['_yoast_wpseo_twitter-title', $postTitle],
+                                ['_yoast_wpseo_twitter-description', $product->seo_description],
+                                ['_yoast_wpseo_twitter-image', $photoData->link],
+                                ['_yoast_wpseo_twitter-image-id', $photoData->id],
+                                ['_yoast_wpseo_focuskw', $postTitle],
+                                ['_yoast_wpseo_title', $product->seo_title],
+                                ['_yoast_wpseo_metadesc', $product->seo_description]
+                            );
+
+                            foreach ($yoastMeta as $yoastInfo) {
+                                $meta_key = $yoastInfo[0];
+                                $meta_value = $yoastInfo[1];
+                                $meta_value = addslashes($meta_value);
+                                $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
+                            }
+
+                            $sql_query.= implode(" UNION ALL ", $sql_query_sel);
+    
+                            $sql_query = str_replace($pageId, $new_post_id, $sql_query);
+                            $sql_query = str_replace("XXXchangehereXXX", $product->type, $sql_query);
+    
+                            $wpdb->query($sql_query);
+                        }
+    
+                        //dodanie do bazy info o udostępnieniu strony
+                        $table_name = $wpdb->prefix . 'av_pages';
+    
+                        $wpdb->insert(
+                            $table_name,
+                            array(
+                                'page_id' => $new_post_id,
+                                'object_id' => $product->id,
+                                'type' => $product->type,
+                            )
+                        );
+                        echo "Strona <b>$postTitle</b> została dodana. \n\n";
+                        sleep(1);
+                    }
+
+                }
+                
+                exit();
+            }
+        ));
+
+        register_rest_route('AVApi/v1', '/copy-pages-test', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                        /*
+                        * duplicate all post meta just in two SQL queries
+                        */
+                        // global $wpdb;
+                        // $sql_query = "";
+                        // $sql_query_sel = [];
+                        // $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
+                        // if (count($post_meta_infos)!=0) {
+                        //     $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
+                        //     foreach ($post_meta_infos as $meta_info) {
+                        //         $meta_key = $meta_info->meta_key;
+                        //         $meta_value = $meta_info->meta_value;
+
+                        //         if( $meta_key == '_wp_old_slug' ) continue;
+                        //         if( $meta_key == '_yoast_wpseo_focuskw' ) {
+                        //             $meta_value = $postTitle;
+                        //         } elseif( $meta_key == '_yoast_wpseo_title' ) {
+                        //             $meta_value = $product->seo_title;
+                        //         } elseif( $meta_key == '_yoast_wpseo_metadesc' ) {
+                        //             $meta_value = $product->seo_description;
+                        //         } elseif( $meta_key == '_yoast_wpseo_opengraph-image' ) {
+                        //             $meta_value = plugins_url("aspirate-viewer/templates/assets/og-images/" . $product->type . "s/" . $product->og_image);
+                        //         }
+
+                        //         $meta_value = addslashes($meta_value);
+                        //         $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
+                        //     }
+
+                            
+                        //     $sql_query.= implode(" UNION ALL ", $sql_query_sel);
+    
+                        //     $sql_query = str_replace($post_id, $new_post_id, $sql_query);
+    
+                        //     $wpdb->query($sql_query);
+                        // }
+
+                uploadPhoto('kurs-google-ads-karol-dziedzic.jpg', 'course', 9990);
+                
 
             }
         ));
@@ -248,6 +469,52 @@ class AVApi
             return $newText;
         }
 
+        function getParentPostId($data) {
+            $productParentIds = [
+                'book' => 1991,
+                'podcast' => 1955,
+                'course' => 2222,
+            ];
+
+            $liderParentIds = [
+                'polski' => 1584,
+                'zagraniczny' => 2303,
+            ];
+
+            if($data->type == 'lider') {
+                return $liderParentIds[$data->country_group];
+            } else {
+                return $productParentIds[$data->type];
+            }
+        }
+
+        function uploadPhoto($photoName, $type, $parentPostId) {
+            $file = plugin_dir_path(__FILE__) . 'templates/assets/og-images/' . $type . 's/' . $photoName;
+            $filename = basename($file);
+
+            $upload_file = wp_upload_bits($filename, null, file_get_contents($file));
+            if (!$upload_file['error']) {
+                $wp_filetype = wp_check_filetype($filename, null );
+                $attachment = array(
+                    'post_mime_type' => $wp_filetype['type'],
+                    'post_parent' => $parentPostId,
+                    'post_title' => preg_replace('/\.[^.]+$/', '', $filename),
+                    'post_content' => '',
+                    'post_status' => 'inherit'
+                );
+                $attachment_id = wp_insert_attachment( $attachment, $upload_file['file'], $parentPostId );
+                if (!is_wp_error($attachment_id)) {
+                    require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+                    $attachment_data = wp_generate_attachment_metadata( $attachment_id, $upload_file['file'] );
+                    wp_update_attachment_metadata( $attachment_id,  $attachment_data );
+                }
+            }
+            return (object) array(
+                'id' => $attachment_id,
+                'link' => str_replace($filename, $attachment_data['sizes']['large']['file'], $upload_file['url'])
+            );
+        }
+
     }
 
     public static function getResults($tableName, $where = "is_visible = 1", $orderBy = "is_top DESC, name") {
@@ -294,6 +561,59 @@ class AVApi
         }
 
         return $authorsText;
+    }
+
+    public static function getLiderProducts($liderId = "") {
+
+        $products = (object) array(
+            'books' => [
+                'quantity' => 0,
+                'objects' => []
+            ],
+            'courses' => [
+                'quantity' => 0,
+                'objects' => []
+            ],
+            'podcasts' => [
+                'quantity' => 0,
+                'objects' => []
+            ],
+        );
+        
+        $books = AVApi::getResults("av_books", "authors_id IS NOT NULL");
+        foreach ($books as $book) {
+            $ids = explode(",", $book->authors_id);
+            foreach ($ids as $id) {
+                if($id == $liderId) {
+                    ++$products->books['quantity'];
+                    array_push($products->books['objects'], $book);
+                }
+            }
+        }
+
+        $courses = AVApi::getResults("av_courses", "authors_id IS NOT NULL");
+        foreach ($courses as $course) {
+            $ids = explode(",", $course->authors_id);
+            foreach ($ids as $id) {
+                if($id == $liderId) {
+                    ++$products->courses['quantity'];
+                    array_push($products->courses['objects'], $course);
+                }
+            }
+        }
+
+        $podcasts = AVApi::getResults("av_podcasts", "authors_id IS NOT NULL");
+        foreach ($podcasts as $podcast) {
+            $ids = explode(",", $podcast->authors_id);
+            foreach ($ids as $id) {
+                if($id == $liderId) {
+                    ++$products->podcasts['quantity'];
+                    array_push($products->podcasts['objects'], $podcast);
+                }
+            }
+        }
+
+        return $products;
     }
 
     public static function getBookBadges($book) {
@@ -391,6 +711,65 @@ class AVApi
         }
 
         return $returnArray;
+    }
+
+    public static function getSocialIcons($object) {
+        $type = $object->type;
+        
+        switch ($type) {
+            case "book":
+                $icons = "";
+                break;
+            case "course":
+                $icons = '';
+                if($object->site != "") {
+                    $icons = "<a class='av-social-icon' href=" . $object->site . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+                }
+                break;
+            case "lider":
+                $socials = json_decode($object->socials);
+                $icons = "";
+                if($socials->sites->private != "") {
+                    $icons .= "<a class='av-social-icon' href=http://" . $socials->sites->private . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+                }
+                if($socials->facebook->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->facebook->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-fb.svg')) . "</a>";
+                }
+                if($socials->instagram->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->instagram->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-ig.svg')) . "</a>";
+                }
+                if($socials->tiktok->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->tiktok->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-tik.svg')) . "</a>";
+                }
+                if($socials->twitter->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->twitter->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-tt.svg')) . "</a>";
+                }
+                if($socials->youtube->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->youtube->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-yt.svg')) . "</a>";
+                }
+                if($socials->linkedin->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->linkedin->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-link.svg')) . "</a>";
+                }
+                break;
+            case "podcast":
+                $links = json_decode($object->links);
+                $icons = "";
+                if($links->page != "") {
+                    $icons .= "<a class='av-social-icon' href=" . $links->page . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+                }
+                if($links->apple != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $links->apple . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/apple-podcast.svg')) . "</a>";
+                }
+                if($links->google != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $links->google . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/google-podcast.svg')) . "</a>";
+                }
+                if($links->spotify != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $links->spotify . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/spotify-podcast.svg')) . "</a>";
+                }
+                break;
+        }
+
+        return $icons;
     }
     
 }

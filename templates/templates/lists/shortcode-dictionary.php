@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
@@ -9,6 +9,14 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
 ?>
 
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/swiper@8/swiper-bundle.min.css"
+/>
+
+<script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+
+<span hidden id="av-is-dictionary"></span>
 <div class="search-bar">
     <input type="text" name="search-input" id="av-search-input" placeholder="Wpisz dowolne słowo, aby wyszukać ...">
     <div id="av-counter">
@@ -16,7 +24,6 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
         <p id="av-counter-all">Wszystkich pozycji: </p>
     </div>
     <div id="av-dictionary-anchors">
-        <!-- <a href="#av-dictionary-letter-anchor-a">A</a> -->
 
         <?php 
 
@@ -29,6 +36,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                     echo "<span class='av-dictionary-anchor-link av-dictionary-anchor-link-inactive'>$letter->letter</span>";
                 }
             }
+
 
         ?>
     </div>
@@ -48,14 +56,23 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                 echo "<span class='av-dictionary-letter-anchor' id='$currentId'>$currentLetter</span>";
             }
 
+            $categoriesElements = '';
+            if($row->categories != "") {
+                $categories = explode(",", $row->categories);
+                foreach ($categories as $category ) {
+                    $categoriesElements .= "<span class='av-category-badge av-badge'> $category </span>";
+                }
+            }
+
             echo "
             <div class='av-item-container' search-text=`$row->search_text`>
                 <div class='av-item-content'>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-small'>
                             <h2>$row->phrase</h2>
+                            $categoriesElements
                         </div>
-                        <p class='av-description'>$row->description</p>
+                        <p class='av-description av-description-dictionary'>$row->description</p>
                     </div>
                 </div>
             </div>

@@ -25,7 +25,15 @@ add_shortcode('lv', 'av_getShortcodeLiders');
 add_shortcode('pv', 'av_getShortcodePodcasts');
 add_shortcode('bv', 'av_getShortcodeBooks');
 add_shortcode('cv', 'av_getShortcodeCourses');
+
 add_shortcode('dv', 'av_getShortcodeDictionary');
+
+add_shortcode('object-info', 'av_getShortcodeObject');
+add_shortcode('lider-info', 'av_getShortcodeLiderInfo');
+add_shortcode('podcast-info', 'av_getShortcodePodcastInfo');
+add_shortcode('book-info', 'av_getShortcodeBookInfo');
+add_shortcode('course-info', 'av_getShortcodeCourseInfo');
+// add_shortcode('product', 'av_getShortcodeProduct');
 
 add_shortcode('cc', 'av_getShortcodeContentCounter');
 
@@ -40,15 +48,23 @@ function av_getShortcodeLiders( $atts ) {
         'is_foreign' => false
     ), $atts );
 
-    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-liders.php';
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/lists/shortcode-liders.php';
 
     return $content;
 
 }
 
+// function av_getShortcodeProduct() {
+
+//     require_once plugin_dir_path(__FILE__) . 'templates/shortcode-product.php';
+
+//     return $content;
+
+// }
+
 function av_getShortcodePodcasts() {
 
-    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-podcasts.php';
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/lists/shortcode-podcasts.php';
 
     return $content;
 
@@ -56,15 +72,7 @@ function av_getShortcodePodcasts() {
 
 function av_getShortcodeBooks() {
 
-    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-books.php';
-
-    return $content;
-
-}
-
-function av_getShortcodeContentCounter() {
-
-    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-content-counter.php';
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/lists/shortcode-books.php';
 
     return $content;
 
@@ -72,7 +80,7 @@ function av_getShortcodeContentCounter() {
 
 function av_getShortcodeCourses() {
 
-    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-courses.php';
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/lists/shortcode-courses.php';
 
     return $content;
 
@@ -80,9 +88,57 @@ function av_getShortcodeCourses() {
 
 function av_getShortcodeDictionary() {
 
-    require_once plugin_dir_path(__FILE__) . 'templates/shortcode-dictionary.php';
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/lists/shortcode-dictionary.php';
 
     return $content;
 
 }
 
+
+function av_getShortcodeObject() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/objects/shortcode-object.php';
+
+    return $content;
+
+}
+
+function av_getShortcodeLiderInfo() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/objects/shortcode-lider-info.php';
+
+    return $content;
+
+}
+
+function av_getShortcodePodcastInfo() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/objects/shortcode-podcast-info.php';
+
+    return $content;
+
+}
+
+function av_getShortcodeBookInfo() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/objects/shortcode-book-info.php';
+
+    return $content;
+
+}
+
+function av_getShortcodeCourseInfo() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/objects/shortcode-course-info.php';
+
+    return $content;
+
+}
+
+function av_getShortcodeContentCounter() {
+
+    require_once plugin_dir_path(__FILE__) . 'templates/templates/other/shortcode-content-counter.php';
+
+    return $content;
+
+}
