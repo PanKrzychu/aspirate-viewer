@@ -231,50 +231,6 @@ class AVApi
             }
         ));
 
-        register_rest_route('AVApi/v1', '/copy-pages-test', array(
-            'methods' => 'GET',
-            'callback' => function() {
-                        /*
-                        * duplicate all post meta just in two SQL queries
-                        */
-                        // global $wpdb;
-                        // $sql_query = "";
-                        // $sql_query_sel = [];
-                        // $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
-                        // if (count($post_meta_infos)!=0) {
-                        //     $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-                        //     foreach ($post_meta_infos as $meta_info) {
-                        //         $meta_key = $meta_info->meta_key;
-                        //         $meta_value = $meta_info->meta_value;
-
-                        //         if( $meta_key == '_wp_old_slug' ) continue;
-                        //         if( $meta_key == '_yoast_wpseo_focuskw' ) {
-                        //             $meta_value = $postTitle;
-                        //         } elseif( $meta_key == '_yoast_wpseo_title' ) {
-                        //             $meta_value = $product->seo_title;
-                        //         } elseif( $meta_key == '_yoast_wpseo_metadesc' ) {
-                        //             $meta_value = $product->seo_description;
-                        //         } elseif( $meta_key == '_yoast_wpseo_opengraph-image' ) {
-                        //             $meta_value = plugins_url("aspirate-viewer/templates/assets/og-images/" . $product->type . "s/" . $product->og_image);
-                        //         }
-
-                        //         $meta_value = addslashes($meta_value);
-                        //         $sql_query_sel[]= "SELECT $new_post_id, '$meta_key', '$meta_value'";
-                        //     }
-
-                            
-                        //     $sql_query.= implode(" UNION ALL ", $sql_query_sel);
-    
-                        //     $sql_query = str_replace($post_id, $new_post_id, $sql_query);
-    
-                        //     $wpdb->query($sql_query);
-                        // }
-
-                uploadPhoto('kurs-google-ads-karol-dziedzic.jpg', 'course', 9990);
-                
-
-            }
-        ));
 
 
         register_rest_route('AVApi/v1', '/liders-generate-search-text', array(
@@ -529,6 +485,18 @@ class AVApi
         return $response;
     }
 
+    public static function getLider($id) {
+        global $wpdb;
+                
+        $table_name = $wpdb->prefix . 'av_liders';
+
+        $query = "SELECT first_name, last_name, country_group, slug FROM $table_name WHERE id=" . $id;
+        
+        $response = $wpdb->get_results($query);
+
+        return $response[0];
+    }
+
     public static function getLiderName($id) {
         global $wpdb;
                 
@@ -561,6 +529,35 @@ class AVApi
         }
 
         return $authorsText;
+    }
+
+    public static function getAuthorsElement($ids = "", $plainText = "", $isBlue = false) {
+        // <p class='av-subtitle av-subtitle-blue'>" . AVApi::getLidersText($product->authors_id, $product->authors_other) . "</p>"
+        // <a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-subtitle av-subtitle-blue'>$product->company</p></a>
+        
+        $authorsElement = "";
+        if($isBlue) $isBlue = "av-subtitle-blue";
+
+        if($ids != "") {
+            $lidersIDs = explode("," , $ids);
+            foreach ($lidersIDs as $id) {
+                $lider = AVApi::getLider($id);
+                if($lider->country_group == "polski") {
+                    $link = "https://aspirate.pl/liderzy-marketingu/" . $lider->slug;
+                } else {
+                    $link = "https://aspirate.pl/zagraniczni-liderzy-marketingu/" . $lider->slug;
+                }
+                $authorsElement .= "<a href='" . $link . "' target='_blank' ><span class='av-subtitle $isBlue'>$lider->first_name $lider->last_name</span></a>, ";
+            }
+        }
+
+        if($plainText != "") {
+            $authorsElement .= "<span class='av-subtitle $isBlue'>$plainText</span>";
+        } else {   
+            $authorsElement = substr($authorsElement,0,-2);
+        }
+        
+        return $authorsElement;
     }
 
     public static function getLiderProducts($liderId = "") {

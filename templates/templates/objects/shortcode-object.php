@@ -33,9 +33,9 @@ $product = AVApi::getResults($productCategories[$productCategory][0], "slug = '$
         $socials = json_decode($product->socials);
         $settings->cooperation == "1" ? $isCooperation = $cooperationElement : $isCooperation = '';
     
-        $subtitle = "<p class='av-company av-company-blue'>$product->company</p>";
+        $subtitle = "<p class='av-subtitle av-subtitle-blue'>$product->company</p>";
         if($socials->sites->company != "") {
-            $subtitle = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-company av-company-blue'>$product->company</p></a>";
+            $subtitle = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-subtitle av-subtitle-blue'>$product->company</p></a>";
         }
 
         $photoAlt = "$product->first_name $product->last_name";
@@ -44,7 +44,7 @@ $product = AVApi::getResults($productCategories[$productCategory][0], "slug = '$
         }
     } else {
         $title = $product->name;
-        $subtitle = "<p class='av-company av-company-blue'>" . AVApi::getLidersText($product->authors_id, $product->authors_other) . "</p>";
+        $subtitle = AVApi::getAuthorsElement($product->authors_id, $product->authors_other, true);
         $photoAlt = "$product->name - " . AVApi::getLidersText($product->authors_id, $product->authors_other);
     }
     $photoTitle = "$photoAlt: ";
@@ -100,7 +100,9 @@ $product = AVApi::getResults($productCategories[$productCategory][0], "slug = '$
                 <div class='av-name-row-blue av-name-row-big'>
                     <h2>$title</h2>
                 </div>
-                $subtitle
+                <div class='av-subtitle-row av-subtitle-row-blue'>
+                    $subtitle
+                </div>    
                 <div class='av-categories'>
                     $categoriesElements
                 </div>

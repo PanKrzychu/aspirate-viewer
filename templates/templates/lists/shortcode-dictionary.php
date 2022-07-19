@@ -73,10 +73,10 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         <div class='av-name-row av-name-row-big'>
                             <h2>$row->phrase</h2>
                         </div>
-                        <p class='av-company'>$row->meaning</p>
+                        <p class='av-subtitle'>$row->meaning</p>
                         <div class='av-categories'>
-                                $categoriesElements
-                            </div>
+                            $categoriesElements
+                        </div>
                         <p class='av-description av-description-dictionary'>$row->description</p>
                     </div>
                 </div>

@@ -33,7 +33,6 @@ add_shortcode('lider-info', 'av_getShortcodeLiderInfo');
 add_shortcode('podcast-info', 'av_getShortcodePodcastInfo');
 add_shortcode('book-info', 'av_getShortcodeBookInfo');
 add_shortcode('course-info', 'av_getShortcodeCourseInfo');
-// add_shortcode('product', 'av_getShortcodeProduct');
 
 add_shortcode('cc', 'av_getShortcodeContentCounter');
 
@@ -53,14 +52,6 @@ function av_getShortcodeLiders( $atts ) {
     return $content;
 
 }
-
-// function av_getShortcodeProduct() {
-
-//     require_once plugin_dir_path(__FILE__) . 'templates/shortcode-product.php';
-
-//     return $content;
-
-// }
 
 function av_getShortcodePodcasts() {
 

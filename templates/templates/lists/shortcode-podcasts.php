@@ -24,8 +24,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
         foreach ($podcasts as $podcast ) {
 
-            $authorsText = AVApi::getLidersText($podcast->authors_id, $podcast->authors_other);
-            $authorsElement = "<p class='av-authors'>$authorsText</p>";
+            $subtitle = AVApi::getAuthorsElement($podcast->authors_id, $podcast->authors_other);
 
             $podcast->top == 1 ? $isTop = 'av-top' : $isTop = '';
 
@@ -59,7 +58,9 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         <div class='av-name-row av-name-row-big'>
                             <a href=' " . $_SERVER['REQUEST_URI'] . $podcast->slug . " ' class='av-show-more-link'><h2>$podcast->name</h2></a>
                         </div>
-                        $authorsElement
+                        <div class='av-subtitle-row'>
+                            $subtitle
+                        </div>
                         <div class='av-categories'>
                             $categoriesElements
                         </div>

@@ -183,15 +183,19 @@ body {
     border-color: #3a3a3a transparent transparent transparent;
   }
 
-.av-company, .av-authors {
+.av-subtitle-row {
+    flex-direction: row;
     font-family: 'Catamaran', sans-serif;
     font-size: 12px;
     font-weight: 400;
     letter-spacing: 0.2em;
+}
+
+.av-subtitle {
     margin-bottom: 10px;
 }
 
-.av-company-blue, .av-description-blue {
+.av-subtitle-blue, .av-description-blue, .av-subtitle-row-blue {
     color: #FFF;
 }
 

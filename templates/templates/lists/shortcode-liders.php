@@ -58,9 +58,9 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             
             $title = substr($title,0,-2);
 
-            $company = "<p class='av-company'>$lider->company</p>";
+            $company = "<p class='av-subtitle'>$lider->company</p>";
             if($socials->sites->company != "") {
-                $company = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-company'>$lider->company</p></a>";
+                $company = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-subtitle'>$lider->company</p></a>";
             }
 
 

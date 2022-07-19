@@ -26,8 +26,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
             $course->is_top == 1 ? $isTop = 'av-top' : $isTop = '';
 
-            $authorsText = AVApi::getLidersText($course->authors_id, $course->authors_other);
-            $authorsElement = "<p class='av-authors'>$authorsText</p>";
+            $subtitle = AVApi::getAuthorsElement($course->authors_id, $course->authors_other);
 
             $photoAlt = "$authorsText - course: $course->name";
             if($course->company != "") {
@@ -65,7 +64,9 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                         <div class='av-name-row av-name-row-big'>
                             <a href=' " . $_SERVER['REQUEST_URI'] . $course->slug . " ' class='av-show-more-link'><h2>$course->name</h2></a>
                         </div>
-                        $authorsElement
+                        <div class='av-subtitle-row'>
+                            $subtitle
+                        </div>
                         <div class='av-categories'>
                             $categoriesElements
                             $infoElements
