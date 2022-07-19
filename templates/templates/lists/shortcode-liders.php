@@ -78,7 +78,6 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big'>
                             <a href=' " . $_SERVER['REQUEST_URI'] . $lider->slug . " ' class='av-show-more-link'><h2>$lider->first_name $lider->last_name</h2></a>
-                            
                             $isCooperation
                         </div>
                         $company

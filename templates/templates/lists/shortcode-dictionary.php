@@ -60,7 +60,9 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             if($row->categories != "") {
                 $categories = explode(",", $row->categories);
                 foreach ($categories as $category ) {
-                    $categoriesElements .= "<span class='av-category-badge av-badge'> $category </span>";
+                    if(strlen($category) > 0) {
+                        $categoriesElements .= "<span class='av-category-badge av-badge'> $category </span>";
+                    }
                 }
             }
 
@@ -68,10 +70,13 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             <div class='av-item-container' search-text=`$row->search_text`>
                 <div class='av-item-content'>
                     <div class='av-right-column'>
-                        <div class='av-name-row av-name-row-small'>
+                        <div class='av-name-row av-name-row-big'>
                             <h2>$row->phrase</h2>
-                            $categoriesElements
                         </div>
+                        <p class='av-company'>$row->meaning</p>
+                        <div class='av-categories'>
+                                $categoriesElements
+                            </div>
                         <p class='av-description av-description-dictionary'>$row->description</p>
                     </div>
                 </div>
