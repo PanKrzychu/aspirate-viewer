@@ -58,9 +58,9 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             
             $title = substr($title,0,-2);
 
-            $company = "<p class='av-subtitle'>$lider->company</p>";
+            $subtitle = "<p class='av-subtitle'>$lider->company</p>";
             if($socials->sites->company != "") {
-                $company = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-subtitle'>$lider->company</p></a>";
+                $subtitle = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-subtitle'>$lider->company</p></a>";
             }
 
 
@@ -80,7 +80,9 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                             <a href=' " . $_SERVER['REQUEST_URI'] . $lider->slug . " ' class='av-show-more-link'><h2>$lider->first_name $lider->last_name</h2></a>
                             $isCooperation
                         </div>
-                        $company
+                        <div class='av-subtitle-row'>
+                            $subtitle
+                        </div>
                         <div class='av-categories'>
                             $categoriesElements
                         </div>
