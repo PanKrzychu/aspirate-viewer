@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
@@ -56,12 +56,23 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                 echo "<span class='av-dictionary-letter-anchor' id='$currentId'>$currentLetter</span>";
             }
 
+            $categoriesElements = '';
+            if($row->categories != "") {
+                $categories = explode(",", $row->categories);
+                foreach ($categories as $category ) {
+                    $categoriesElements .= "<span class='av-category-badge av-badge'> $category </span>";
+                }
+            }
+
             echo "
             <div class='av-item-container' search-text=`$row->search_text`>
                 <div class='av-item-content'>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-small'>
                             <h2>$row->phrase</h2>
+                            <div class='av-categories'>
+                                $categoriesElements
+                            </div>
                         </div>
                         <p class='av-description av-description-dictionary'>$row->description</p>
                     </div>

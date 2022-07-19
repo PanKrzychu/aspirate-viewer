@@ -97,7 +97,7 @@ body {
 
 .av-name-row {
     margin-top: 20px;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .av-name-row h2 {
@@ -211,11 +211,11 @@ body {
 } */
 
 .av-socials-blue .av-social-icon {
-    fill: #A5A5A5
+    fill: #FFF
 }
 
 .av-socials-blue .av-social-icon:hover {
-    fill: #FFF
+    fill: #CA9817
 }
 
 .av-social-icon:hover {
@@ -319,7 +319,7 @@ body {
     text-transform: uppercase;
 }
 
-.av-product-link {
+.av-show-more-link {
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 700;
     color: #314AA3;
@@ -334,7 +334,7 @@ body {
 
 
 @media only screen and (max-width: 700px) {
-    .av-item-content {
+    .av-item-content, .av-item-content-blue {
         flex-wrap: wrap;
     }
 

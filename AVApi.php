@@ -21,7 +21,7 @@ class AVApi
             }
         ));
 
-        register_rest_route('AVApi/v1', '/set-slug', array(
+        register_rest_route('AVApi/v1', '/set-cover', array(
             'methods' => 'GET',
             'callback' => function() {
                 global $wpdb;
@@ -33,8 +33,38 @@ class AVApi
                 $liders = $wpdb->get_results($query);
 
                 foreach ($liders as $lider) {
-                    $slug = $lider->first_name . "-" . $lider->last_name . "-" . $lider->company;
-                    $slug = AVApi::replaceAccents($slug);    
+                    $nameSlug = preg_replace('/\s+/', '', strtolower(AVApi::replaceAccents($lider->first_name . "-" . $lider->last_name)));
+                    $photoName = "aspirate-blog-marketingowy-liderzy-marketingu-$nameSlug.jpg";
+                    $wpdb->update(
+                        $table_name,
+                        array(
+                            'cover' => $photoName
+                        ),
+                        array(
+                            'id' => $lider->id
+                        )
+                    );
+                    echo "Cover dla lidera o id: " . $lider->id . " został zaktualizowany: " . $photoName ." \n\n";
+                }
+
+                exit();
+
+            }
+        ));
+
+        register_rest_route('AVApi/v1', '/set-slug', array(
+            'methods' => 'GET',
+            'callback' => function() {
+                global $wpdb;
+                
+                $table_name = $wpdb->prefix . 'av_books';
+
+                $query = "SELECT * FROM $table_name";
+
+                $objects = $wpdb->get_results($query);
+
+                foreach ($objects as $object) {
+                    $slug = AVApi::replaceAccents($object->slug);    
                     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $slug)));
                     if(substr($slug, -1) == "-") $slug = substr($slug, 0, -1);
                     $wpdb->update(
@@ -43,10 +73,10 @@ class AVApi
                             'slug' => $slug
                         ),
                         array(
-                            'id' => $lider->id
+                            'id' => $object->id
                         )
                     );
-                    echo "Slug dla lidera o id: " . $lider->id . " został zaktualizowany: " . $slug ." \n\n";
+                    echo "Slug dla objecta o id: " . $object->id . " został zaktualizowany: " . $slug ." \n\n";
                 }
 
                 exit();
@@ -90,12 +120,14 @@ class AVApi
                     //filter zwraca do tablicy dane jeżeli objekt już ma podstronę
                     $copyArrays = array_filter($existingPages, function($obj) use($product) {
                         if($obj->type == $product->type && $obj->object_id == $product->id) {
+                            echo $obj->type . " " . $obj->object_id;
                             return true;
                         } else {
                             return false;
                         }
                     });
 
+                    sleep(1);
                     //jeżeli tablica jest pusta to dodajemy stronę
                     if(count($copyArrays) == 0) {
 
@@ -114,6 +146,14 @@ class AVApi
                         $post['post_content'] = '[object-info][' . $product->type . '-info]';
                         $post['post_parent'] = getParentPostId($product);
                         $new_post_id = wp_insert_post($post);
+
+                        $updatePost = array(
+                            'ID'           => $new_post_id,
+                            'guid'   => substr($post['guid'], 0, -4) . $new_post_id
+                        );
+                       
+                      // Update the post into the database
+                        wp_update_post( $updatePost );
     
                         /*
                         * duplicate all post meta just in two SQL queries
@@ -121,15 +161,16 @@ class AVApi
                         global $wpdb;
                         $sql_query = "";
                         $sql_query_sel = [];
-                        $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
+                        $post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$pageId");
                         if (count($post_meta_infos)!=0) {
 
                             $photoData = uploadPhoto($product->og_image, $product->type, $new_post_id);
+                            sleep(1);
 
                             $sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
                             foreach ($post_meta_infos as $meta_info) {
                                 $meta_key = $meta_info->meta_key;
-                                if(!str_contains($meta_key, "_yoast_wpseo")) {
+                                if(substr($meta_key, 0, 13) != "_yoast_wpseo_") {
                                     $meta_value = $meta_info->meta_value;
                                     if( $meta_key == '_wp_old_slug' ) continue;
                                     if ( $meta_key == '_thumbnail_id' ) {
@@ -163,7 +204,8 @@ class AVApi
 
                             $sql_query.= implode(" UNION ALL ", $sql_query_sel);
     
-                            $sql_query = str_replace($post_id, $new_post_id, $sql_query);
+                            $sql_query = str_replace($pageId, $new_post_id, $sql_query);
+                            $sql_query = str_replace("XXXchangehereXXX", $product->type, $sql_query);
     
                             $wpdb->query($sql_query);
                         }
@@ -669,6 +711,65 @@ class AVApi
         }
 
         return $returnArray;
+    }
+
+    public static function getSocialIcons($object) {
+        $type = $object->type;
+        
+        switch ($type) {
+            case "book":
+                $icons = "";
+                break;
+            case "course":
+                $icons = '';
+                if($object->site != "") {
+                    $icons = "<a class='av-social-icon' href=" . $object->site . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+                }
+                break;
+            case "lider":
+                $socials = json_decode($object->socials);
+                $icons = "";
+                if($socials->sites->private != "") {
+                    $icons .= "<a class='av-social-icon' href=http://" . $socials->sites->private . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+                }
+                if($socials->facebook->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->facebook->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-fb.svg')) . "</a>";
+                }
+                if($socials->instagram->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->instagram->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-ig.svg')) . "</a>";
+                }
+                if($socials->tiktok->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->tiktok->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-tik.svg')) . "</a>";
+                }
+                if($socials->twitter->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->twitter->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-tt.svg')) . "</a>";
+                }
+                if($socials->youtube->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->youtube->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-yt.svg')) . "</a>";
+                }
+                if($socials->linkedin->address != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $socials->linkedin->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-link.svg')) . "</a>";
+                }
+                break;
+            case "podcast":
+                $links = json_decode($object->links);
+                $icons = "";
+                if($links->page != "") {
+                    $icons .= "<a class='av-social-icon' href=" . $links->page . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
+                }
+                if($links->apple != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $links->apple . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/apple-podcast.svg')) . "</a>";
+                }
+                if($links->google != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $links->google . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/google-podcast.svg')) . "</a>";
+                }
+                if($links->spotify != "") {
+                    $icons .=  "<a class='av-social-icon' href=" . $links->spotify . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/spotify-podcast.svg')) . "</a>";
+                }
+                break;
+        }
+
+        return $icons;
     }
     
 }

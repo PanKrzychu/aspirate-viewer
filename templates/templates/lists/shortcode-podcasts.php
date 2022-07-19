@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
@@ -24,8 +24,6 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
 
         foreach ($podcasts as $podcast ) {
 
-            $links = json_decode($podcast->links);
-
             $authorsText = AVApi::getLidersText($podcast->authors_id, $podcast->authors_other);
             $authorsElement = "<p class='av-authors'>$authorsText</p>";
 
@@ -46,26 +44,6 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             }
             $title = substr($title,0,-2);
 
-            //socials
-            $sitePriv = '';
-            if($links->page != "") {
-                $sitePriv = "<a class='av-social-icon' href=" . $links->page . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
-            }
-            $linkApple = '';
-            if($links->apple != "") {
-                $linkApple = "<a class='av-social-icon' href=" . $links->apple . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/apple-podcast.svg')) . "</a>";
-            }
-            $linkGoogle = '';
-            if($links->google != "") {
-                $linkGoogle = "<a class='av-social-icon' href=" . $links->google . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/google-podcast.svg')) . "</a>";
-            }
-            $linkSpotify = '';
-            if($links->spotify != "") {
-                $linkSpotify = "<a class='av-social-icon' href=" . $links->spotify . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/spotify-podcast.svg')) . "</a>";
-            }
-
-            $socialsElements = $sitePriv . $linkApple . $linkGoogle . $linkSpotify;
-
             $photoName = $podcast->cover;
             
 
@@ -73,20 +51,20 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             <div class='av-item-container' search-text=`$podcast->search_text`>
                 <div class='av-item-content $isTop'>
                     <div class='av-left-column'>
-                        <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/podcasts/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $podcast->slug . " ' class='av-show-more-link'>
+                            <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/podcasts/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        </a>
                     </div>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big'>
-                            <h2>$podcast->name</h2>
+                            <a href=' " . $_SERVER['REQUEST_URI'] . $podcast->slug . " ' class='av-show-more-link'><h2>$podcast->name</h2></a>
                         </div>
                         $authorsElement
                         <div class='av-categories'>
                             $categoriesElements
                         </div>
                         <p class='av-description'>$podcast->description</p>
-                        <div class='av-socials'>
-                            $socialsElements
-                        </div>
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $podcast->slug . " ' class='av-show-more-link'>Dowiedz się więcej...</a>
                     </div>
                 </div>
             </div>

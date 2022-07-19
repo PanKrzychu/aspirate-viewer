@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
 wp_enqueue_style('av-styles', plugins_url('aspirate-viewer/templates/styles/viewer-styles.css'));
@@ -85,14 +85,18 @@ if(count($allProducts) > 0) {
             <div class='av-item-container'>
                 <div class='av-item-content'>
                     <div class='av-left-column'>
-                    <img src=" . plugins_url($product['coverPath']) . ">
+                    <a href=' " . $product['link'] . " ' class='av-show-more-link'>
+                        <img src=" . plugins_url($product['coverPath']) . ">
+                    </a>
                     </div>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big av-space-10'>
+                        <a href=' " . $product['link'] . " ' class='av-show-more-link'>
                             <h2>". $product['name'] ."</h2>
+                        </a>
                         </div>
                         <div class='av-categories av-space-40'>" . $product['categories'] . $product['type'] . "</div>
-                        <a href=' " . $product['link'] . " ' class='av-product-link'>Dowiedz się więcej...</a>
+                        <a href=' " . $product['link'] . " ' class='av-show-more-link'>Dowiedz się więcej...</a>
                     </div>
                 </div>
             </div>

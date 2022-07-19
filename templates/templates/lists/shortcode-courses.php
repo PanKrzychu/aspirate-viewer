@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
@@ -50,12 +50,6 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                 $infoElements .= "<span class='av-info-badge av-badge'> $info </span>";
             }
 
-            //socials
-            $sitePriv = '';
-            if($course->site != "") {
-                $sitePriv = "<a class='av-social-icon' href=" . $course->site . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
-            }
-
             $course->cover != "" ? $photoName = $course->cover : $photoName = "photo-placeholder.png";        
             
 
@@ -63,11 +57,13 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             <div class='av-item-container' search-text=`$course->search_text`>
                 <div class='av-item-content $isTop'>
                     <div class='av-left-column'>
-                        <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/courses/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $course->slug . " ' class='av-show-more-link'>
+                            <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/courses/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        </a>
                     </div>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big'>
-                            <h2>$course->name</h2>
+                            <a href=' " . $_SERVER['REQUEST_URI'] . $course->slug . " ' class='av-show-more-link'><h2>$course->name</h2></a>
                         </div>
                         $authorsElement
                         <div class='av-categories'>
@@ -75,9 +71,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                             $infoElements
                         </div>
                         <p class='av-description'>$course->description</p>
-                        <div class='av-socials'>
-                            $sitePriv
-                        </div>
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $course->slug . " ' class='av-show-more-link'>Dowiedz się więcej...</a>
                     </div>
                 </div>
             </div>

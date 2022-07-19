@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
@@ -37,8 +37,8 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
         foreach ($liders as $lider ) {
 
             $settings = json_decode($lider->settings);
-
             $socials = json_decode($lider->socials);
+
             $settings->cooperation == "1" ? $isCooperation = $cooperationElement : $isCooperation = '';
             $lider->is_top == "1" ? $isTop = 'av-top' : $isTop = '';
 
@@ -58,43 +58,11 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             
             $title = substr($title,0,-2);
 
-            //socials
-            $sitePriv = '';
-            if($socials->sites->private != "") {
-                $sitePriv = "<a class='av-social-icon' href=http://" . $socials->sites->private . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-www.svg')) . "</a>";
-            }
-            $linkFB = '';
-            if($socials->facebook->address != "") {
-                $linkFB = "<a class='av-social-icon' href=" . $socials->facebook->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-fb.svg')) . "</a>";
-            }
-            $linkIG = '';
-            if($socials->instagram->address != "") {
-                $linkIG = "<a class='av-social-icon' href=" . $socials->instagram->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-ig.svg')) . "</a>";
-            }
-            $linkTik = '';
-            if($socials->tiktok->address != "") {
-                $linkTik = "<a class='av-social-icon' href=" . $socials->tiktok->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-tik.svg')) . "</a>";
-            }
-            $linkTT = '';
-            if($socials->twitter->address != "") {
-                $linkTT = "<a class='av-social-icon' href=" . $socials->twitter->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-tt.svg')) . "</a>";
-            }
-            $linkYT = '';
-            if($socials->youtube->address != "") {
-                $linkYT = "<a class='av-social-icon' href=" . $socials->youtube->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-yt.svg')) . "</a>";
-            }
-
-            $linkLink = '';
-            if($socials->linkedin->address != "") {
-                $linkLink = "<a class='av-social-icon' href=" . $socials->linkedin->address . " target='_blank' >" . file_get_contents(plugins_url('aspirate-viewer/templates/assets/icons/logo-link.svg')) . "</a>";
-            }
-
             $company = "<p class='av-company'>$lider->company</p>";
             if($socials->sites->company != "") {
                 $company = "<a href=http://" . $socials->sites->company . " target='_blank' ><p class='av-company'>$lider->company</p></a>";
             }
 
-            $socialsElements = $sitePriv . $linkFB . $linkIG . $linkTik . $linkTT . $linkYT . $linkLink;
 
             $nameSlug = preg_replace('/\s+/', '', strtolower(AVApi::replaceAccents($lider->first_name . "-" . $lider->last_name)));
             $photoName = "aspirate-blog-marketingowy-liderzy-marketingu-$nameSlug.jpg";            
@@ -103,21 +71,21 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             <div class='av-item-container' search-text=`$lider->search_text`>
                 <div class='av-item-content $isTop'>
                     <div class='av-left-column'>
-                        <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/liders/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $lider->slug . " ' class='av-show-more-link'>
+                            <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/liders/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        </a>
                     </div>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big'>
-                            <h2>$lider->first_name $lider->last_name</h2>
-                            $isCooperation
+                                <a href=' " . $_SERVER['REQUEST_URI'] . $lider->slug . " ' class='av-show-more-link'><h2>$lider->first_name $lider->last_name</h2></a>
+                                $isCooperation
                         </div>
                         $company
                         <div class='av-categories'>
                             $categoriesElements
                         </div>
                         <p class='av-description'>$lider->description</p>
-                        <div class='av-socials'>
-                            $socialsElements
-                        </div>
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $lider->slug . " ' class='av-show-more-link'>Dowiedz się więcej...</a>
                     </div>
                 </div>
             </div>";

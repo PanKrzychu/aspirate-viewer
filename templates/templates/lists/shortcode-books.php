@@ -1,6 +1,6 @@
 <?php
 
-require_once plugin_dir_path(__FILE__) . '../AVApi.php';
+require_once plugin_dir_path(__FILE__) . '../../../AVApi.php';
 
 
 wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Catamaran&family=Source+Sans+Pro:wght@700;900&display=swap', false );
@@ -53,11 +53,13 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
             <div class='av-item-container' search-text=`$book->search_text`>
                 <div class='av-item-content $isTop'>
                     <div class='av-left-column'>
-                        <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/books/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $book->slug . " ' class='av-show-more-link'>
+                            <img src=" . plugins_url('aspirate-viewer/templates/assets/photos/books/' . $photoName) . " alt='$photoAlt' title='$title' >
+                        </a>
                     </div>
                     <div class='av-right-column'>
                         <div class='av-name-row av-name-row-big'>
-                            <h2>$book->name</h2>
+                            <a href=' " . $_SERVER['REQUEST_URI'] . $book->slug . " ' class='av-show-more-link'><h2>$book->name</h2></a>
                         </div>
                         $authorsElement
                         <div class='av-categories'>
@@ -65,9 +67,7 @@ wp_enqueue_script( 'av-search', plugins_url( 'aspirate-viewer/templates/scripts/
                             $infoElements
                         </div>
                         <p class='av-description'>$book->description</p>
-                        <!-- <div class='av-socials'>
-                            $socialsElements
-                        </div> -->
+                        <a href=' " . $_SERVER['REQUEST_URI'] . $book->slug . " ' class='av-show-more-link'>Dowiedz się więcej...</a>
                     </div>
                 </div>
             </div>
